@@ -2,7 +2,10 @@ defmodule Chat.System.Message do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "chat_messages" do
+  alias Chat.System.{Conversation, SeenMessage, MessageReaction}
+  alias Chat.Users.User
+
+  schema "messages" do
     field :content, :string
 
     belongs_to :conversation, Conversation

@@ -42,7 +42,7 @@ defmodule ChatWeb.Router do
   scope "/", ChatWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/*path", PageController, :index
   end
 
   # Other scopes may use custom stacks.
@@ -64,5 +64,14 @@ defmodule ChatWeb.Router do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: ChatWeb.Telemetry
     end
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0",
+        title: "My App"
+      }
+    }
   end
 end

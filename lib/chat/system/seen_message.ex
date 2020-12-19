@@ -1,14 +1,15 @@
 defmodule Chat.System.SeenMessage do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Chat.Users.User
+  alias Chat.System.Message
 
-  schema "chat_seen_messages" do
+  schema "seen_messages" do
     belongs_to :user, User
     belongs_to :message, Message
 
     timestamps()
   end
-
 
   @doc false
   def changeset(seen_message, attrs) do

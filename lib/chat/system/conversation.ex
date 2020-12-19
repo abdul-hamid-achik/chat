@@ -1,8 +1,9 @@
 defmodule Chat.System.Conversation do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Chat.System.{Message, ConversationMember}
 
-  schema "chat_conversations" do
+  schema "conversations" do
     field :title, :string
 
     has_many :conversation_members, ConversationMember

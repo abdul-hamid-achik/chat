@@ -2,7 +2,7 @@ defmodule Chat.System.Emoji do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "chat_emojis" do
+  schema "emojis" do
     field :key, :string
     field :unicode, :string
 

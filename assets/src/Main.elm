@@ -1,142 +1,124 @@
-module Main exposing (..)
+module Main exposing (Model, Msg, init, subscriptions, update, view)
 
 import Browser
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Browser.Navigation as Nav
+import Html exposing (Html, a, div, main_, nav, text)
+import Html.Attributes exposing (class, href)
+import Pages.LogIn
+import Pages.SignUp
+import Router exposing (Route(..), fromUrl, linkTo)
+import Url exposing (Url)
+import Url.Parser as Parser exposing (Parser, map, oneOf, s, top)
 
 
+main : Program () Model Msg
+main =
+    Browser.application
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        , onUrlRequest = UrlRequested
+        , onUrlChange = UrlChanged
+        }
 
----- MODEL ----
+
+type alias Flags =
+    {}
 
 
 type alias Model =
-    { route : String
-    , isNavbarOpen : Bool
+    { key : Nav.Key
+    , url : Url.Url
+    , route : Route
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { route = ""
-      , isNavbarOpen = False
-      }
-    , Cmd.none
-    )
-
-
-
----- UPDATE ----
-
-
 type Msg
-    = OpenNavbar
-    | CloseNavbar
-    | LinkClicked
-    | UrlChanged
+    = UrlRequested Browser.UrlRequest
+    | UrlChanged Url.Url
+
+
+content : Model -> Html msg
+content model =
+    case model.route of
+        SignUp ->
+            Pages.SignUp.render
+
+        LogIn ->
+            Pages.LogIn.render
+
+        Index ->
+            indexPage model
+
+        _ ->
+            indexPage model
+
+
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
+    ( Model key url Router.NotFound, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        OpenNavbar ->
-            ( { model | isNavbarOpen = True }, Cmd.none )
+        UrlRequested urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
 
-        CloseNavbar ->
-            ( { model | isNavbarOpen = False }, Cmd.none )
+                Browser.External href ->
+                    ( model, Nav.load href )
 
-        _ ->
-            ( model, Cmd.none )
-
-
-toggleNavbar : Bool -> Msg
-toggleNavbar isNavbarOpen =
-    case isNavbarOpen of
-        False ->
-            OpenNavbar
-
-        True ->
-            CloseNavbar
+        UrlChanged url ->
+            ( { model | route = fromUrl url }, Cmd.none )
 
 
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
----- VIEW ----
+
+indexPage : Model -> Html msg
+indexPage model =
+    div []
+        [ text "index page"
+        ]
 
 
-view : Model -> Html Msg
+navbar : Model -> Html msg
+navbar model =
+    nav [ class "bg-gray-800" ]
+        [ div [ class "max-w-7xl mx-auto px-2 sm:px-6 lg:px-8" ]
+            [ div [ class "relative flex items-center justify-between h-16" ]
+                [ div [ class "flex-1 flex items-center justify-center sm:items-stretch sm:justify-start" ]
+                    [ div [ class "hidden sm:block sm:ml-6" ]
+                        [ div [ class "flex space-x-4" ]
+                            [ linkTo Index model.route
+                            , linkTo SignUp model.route
+                            , linkTo LogIn model.route
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+
+
+view : Model -> Browser.Document msg
 view model =
-    section
-        [ classList
-            [ ( "hero", True )
-            , ( "is-success", True )
-            , ( "is-fullheight", True )
-            ]
-        ]
-        [ div [ class "hero-head" ]
-            [ header [ class "navbar" ]
-                [ div [ class "container" ]
-                    [ div [ class "navbar-brand" ]
-                        [ a [ class "navbar-item" ] [ img [ src "https://bulma.io/images/bulma-type-white.png" ] [] ]
-                        , span
-                            [ classList
-                                [ ( "navbar-burger", True )
-                                , ( "burger", True )
-                                ]
-                            , onClick <| toggleNavbar model.isNavbarOpen
-                            ]
-                            [ span [] []
-                            , span [] []
-                            , span [] []
-                            ]
-                        ]
-                    , div [ classList [ ( "navbar-menu", True ), ( "is-active", model.isNavbarOpen ) ] ]
-                        [ div [ class "navbar-end" ]
-                            [ a
-                                [ classList
-                                    [ ( "navbar-item", True )
-                                    , ( "is-active", True )
-                                    ]
-                                ]
-                                [ text "Login" ]
-                            , a
-                                [ classList
-                                    [ ( "navbar-item", True )
-                                    , ( "is-active", False )
-                                    ]
-                                ]
-                                [ text "Sign Up" ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        , div [ class "hero-body" ] []
-        , div [ class "hero-foot" ]
-            [ nav [ classList [ ( "tabs", True ), ( "is-boxed", True ), ( "is-fullwidth", True ) ] ]
-                [ div [ class "container" ]
-                    [ ul []
-                        [ li [ classList [ ( "Active Room", True ) ] ]
-                            [ a [] [ text "Profile" ]
-                            ]
-                        , li [ classList [ ( "is-active", False ) ] ]
-                            [ a [] [ text "Something Else" ]
-                            ]
+    { title = "Chat by Abdul Hamid"
+    , body =
+        [ div [ class "min-h-screen bg-white" ]
+            [ navbar model
+            , div [ class "py-10" ]
+                [ main_ []
+                    [ div [ class "max-w-7xl mx-auto sm:px-6 lg:px-8" ]
+                        [ content model
                         ]
                     ]
                 ]
             ]
         ]
-
-
-
----- PROGRAM ----
-
-
-main : Program () Model Msg
-main =
-    Browser.element
-        { view = view
-        , init = \_ -> init
-        , update = update
-        , subscriptions = \_ -> Sub.none
-        }
+    }

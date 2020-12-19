@@ -1,11 +1,21 @@
 # Chat
 Made with Elixir and Elm
 
-To start:
+## Installation
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Install Node.js dependencies with `npm install` inside the `assets` directory
-  * Start Phoenix endpoint with `mix phx.server`
+- [taskfile](http://taskfile.dev)
+- [asdf](https://asdf-vm.com/)
+- asdf plugins:
+  - asdf-elixir
+  - asdf-erlang
+  - asdf-nodejs
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+## Local Development Environment
+
+- `task setup`
+- `task start`
+
+## Production Environment
+
+Check development file, i'm using [releases](https://hexdocs.pm/phoenix/releases.html) to generate a binary inside a dockerfile
+

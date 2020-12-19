@@ -7,9 +7,8 @@
 				"_build",
 				"deps",
 				"assets/node_modules",
-				"assets/elm-stuff",
 				".elixir_ls"
-			]
+			],
 		}
 	],
 	"settings": {
@@ -20,9 +19,18 @@
 				"enabled": true,
 				"settings" : {
 					"elixirLS.fetchDeps": true,
-					"elixirLS.dialyzerFormat": "dialyxir_short"
 				},
 			},
+			"LSP-typescript":
+			{
+				"enabled": false
+			},
 		},
-	}
+	},
+	"build_systems": [
+		{
+			"name": "Setup",
+			"cmd": ["task", "setup"],
+		}
+	],
 }

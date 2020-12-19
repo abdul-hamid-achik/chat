@@ -2,11 +2,9 @@ defmodule Chat.System.MessageReaction do
   use Ecto.Schema
   import Ecto.Changeset
   alias Chat.Users.User
-  alias Chat.System.Emoji
-  alias Chat.System.Message
+  alias Chat.System.{Emoji, Message}
 
-
-  schema "chat_message_reactions" do
+  schema "message_reactions" do
     belongs_to :user, User
     belongs_to :emoji, Emoji
     belongs_to :message, Message

@@ -4,7 +4,7 @@ defmodule Chat.System.ConversationMember do
   alias Chat.Users.User
   alias Chat.System.Conversation
 
-  schema "chat_conversation_members" do
+  schema "conversation_members" do
     field :owner, :boolean, default: false
 
     belongs_to :user, User

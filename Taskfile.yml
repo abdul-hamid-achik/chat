@@ -1,0 +1,51 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    - task: help
+
+  routes:
+    - mix phx.routes -r Ecomerce.Router
+
+  reset:
+    cmds:
+      - task: clean
+      - task: setup
+
+  clean:
+    - mix clean
+    - mix ecto.drop
+    - rm -rf ./assets/node_modules
+    - rm -rf ./uploads
+
+  migrate:
+    cmds:
+      - mix ecto.migrate
+
+  start:
+    deps: [migrate]
+    cmds:
+      - mix phx.server
+
+  setup:
+    cmds:
+      - mix deps.get
+      - mix compile
+      - mix ecto.setup
+      - npm install --prefix assets
+
+  seed:
+    - mix run priv/repo/seeds.exs
+
+  test:
+    cmds:
+      - mix test
+
+  test.wip:
+    cmds:
+      - mix test --only wip
+
+  help:
+    - echo "Hey"
