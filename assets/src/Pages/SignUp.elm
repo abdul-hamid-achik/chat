@@ -1,7 +1,12 @@
-module Pages.SignUp exposing (Model, render)
+module Pages.SignUp exposing (Model, Msg, init, view)
 
+import Debug
 import Html exposing (Html, a, button, div, form, h2, input, label, p, text)
 import Html.Attributes exposing (class, for, href, id, name, placeholder, type_)
+import Html.Events exposing (onInput, onSubmit)
+import Http
+import Json.Decode exposing (list, string)
+import Json.Encode as Encode
 
 
 
@@ -13,16 +18,16 @@ type alias Model =
 
 
 type alias Form =
-    { email : Maybe String, password : Maybe String, confirm_password : Maybe String }
+    { email : String, password : String, confirm_password : String }
 
 
 
 -- INIT
 
 
-init : ( Model, Cmd msg )
+init : ( Model, Cmd Msg )
 init =
-    ( { form = { email = Nothing, password = Nothing, confirm_password = Nothing } }, Cmd.none )
+    ( { form = { email = "", password = "", confirm_password = "" } }, Cmd.none )
 
 
 
@@ -31,16 +36,60 @@ init =
 
 type Msg
     = Reset
+    | EmailChange String
+    | PasswordChange String
+    | ConfirmPasswordChange String
+    | FormSubmit
+    | GotResponse (Result Http.Error (List String))
 
 
-update : Msg -> Model -> Model
+serializeForm : Form -> Http.Body
+serializeForm form =
+    Encode.object
+        [ ( "email", Encode.string form.email )
+        , ( "password", Encode.string form.password )
+        , ( "confirm_password", Encode.string form.confirm_password )
+        ]
+        |> Http.jsonBody
+
+
+submitForm : Model -> Cmd Msg
+submitForm model =
+    Http.post
+        { url = "/sessions"
+        , body = serializeForm model.form
+        , expect = Http.expectJson GotResponse (list string)
+        }
+
+
+updateForm : (Form -> Form) -> Model -> ( Model, Cmd Msg )
+updateForm transform model =
+    ( { model | form = transform model.form }, Cmd.none )
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Reset ->
-            model
+            ( model, Cmd.none )
+
+        EmailChange email ->
+            updateForm (\form -> { form | email = email }) model
+
+        PasswordChange password ->
+            updateForm (\form -> { form | password = password }) model
+
+        ConfirmPasswordChange password ->
+            updateForm (\form -> { form | confirm_password = password }) model
+
+        FormSubmit ->
+            ( model, submitForm model )
+
+        _ ->
+            ( model, Cmd.none )
 
 
-view : Model -> Html msg
+view : ( Model, Cmd Msg ) -> Html Msg
 view model =
     div [ class "flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" ]
         [ div [ class "max-w-md w-full space-y-8" ]
@@ -55,7 +104,7 @@ view model =
                         ]
                     ]
                 ]
-            , form [ class "mt-8 space-y-6" ]
+            , form [ class "mt-8 space-y-6", onSubmit FormSubmit ]
                 [ div [ class "rounded-md shadow-sm -space-y-px" ]
                     [ div []
                         [ label
@@ -69,6 +118,7 @@ view model =
                             , placeholder "Email Address"
                             , name "email"
                             , class "appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                            , onInput EmailChange
                             ]
                             []
                         ]
@@ -111,16 +161,3 @@ view model =
                 ]
             ]
         ]
-
-
-
--- VIEW
-
-
-render : Html msg
-render =
-    let
-        ( model, _ ) =
-            init
-    in
-    view model

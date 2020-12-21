@@ -1,4 +1,4 @@
-module Pages.LogIn exposing (render)
+module Pages.LogIn exposing (Model, Msg, init, view)
 
 import Html exposing (Html, a, button, div, form, h2, input, label, p, text)
 import Html.Attributes exposing (class, for, href, id, name, placeholder, type_)
@@ -44,7 +44,7 @@ update msg model =
 -- VIEW
 
 
-view : Model -> Html msg
+view : ( Model, Cmd Msg ) -> Html msg
 view model =
     div [ class "flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" ]
         [ div [ class "max-w-md w-full space-y-8" ]
@@ -100,12 +100,3 @@ view model =
                 ]
             ]
         ]
-
-
-render : Html msg
-render =
-    let
-        ( model, _ ) =
-            init
-    in
-    view model

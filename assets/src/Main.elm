@@ -4,8 +4,9 @@ import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html, a, div, main_, nav, text)
 import Html.Attributes exposing (class, href)
-import Pages.LogIn
-import Pages.SignUp
+import Pages.Index as IndexPage
+import Pages.LogIn as LogInPage
+import Pages.SignUp as SignUpPage
 import Router exposing (Route(..), fromUrl, linkTo)
 import Url exposing (Url)
 import Url.Parser as Parser exposing (Parser, map, oneOf, s, top)
@@ -34,25 +35,33 @@ type alias Model =
     }
 
 
+type PageModel
+    = SignUpPage SignUpPage.Model
+    | LogInPage LogInPage.Model
+
+
 type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
+    | GotSignUpMsg SignUpPage.Msg
+    | GotLogInMsg LogInPage.Msg
+    | GotIndexMsg IndexPage.Msg
 
 
-content : Model -> Html msg
+content : Model -> Html Msg
 content model =
     case model.route of
         SignUp ->
-            Pages.SignUp.render
+            Html.map GotSignUpMsg (SignUpPage.view SignUpPage.init)
 
         LogIn ->
-            Pages.LogIn.render
+            Html.map GotLogInMsg (LogInPage.view LogInPage.init)
 
         Index ->
-            indexPage model
+            Html.map GotIndexMsg (IndexPage.view IndexPage.init)
 
         _ ->
-            indexPage model
+            Html.map GotIndexMsg (IndexPage.view IndexPage.init)
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -74,17 +83,13 @@ update msg model =
         UrlChanged url ->
             ( { model | route = fromUrl url }, Cmd.none )
 
+        _ ->
+            ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
-
-
-indexPage : Model -> Html msg
-indexPage model =
-    div []
-        [ text "index page"
-        ]
 
 
 navbar : Model -> Html msg
@@ -106,7 +111,7 @@ navbar model =
         ]
 
 
-view : Model -> Browser.Document msg
+view : Model -> Browser.Document Msg
 view model =
     { title = "Chat by Abdul Hamid"
     , body =
