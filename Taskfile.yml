@@ -7,7 +7,7 @@ tasks:
     - task: help
 
   routes:
-    - mix phx.routes -r Ecomerce.Router
+    - mix phx.routes -r Chat.Router
 
   reset:
     cmds:
@@ -15,20 +15,28 @@ tasks:
       - task: setup
 
   clean:
-    - mix clean
-    - mix ecto.drop
-    - rm -rf ./assets/node_modules
-    - rm -rf ./uploads
+    cmds:
+      - mix clean
+      - mix ecto.drop
+      - rm -rf ./assets/node_modules
+      - rm -rf ./uploads
 
   migrate:
     cmds:
       - mix ecto.migrate
 
-  start:
+  server:
     deps: [migrate]
     cmds:
       - mix phx.server
-
+  iex.server:
+    deps: [migrate]
+    cmds:
+      - iex -S mix phx.server
+  iex:
+    deps: [migrate]
+    cmds:
+      - iex -S mix
   setup:
     cmds:
       - mix deps.get
@@ -36,16 +44,29 @@ tasks:
       - mix ecto.setup
       - npm install --prefix assets
 
+    status:
+      - test -d ./assets/node_modules
+      - test -d ./_build
+
   seed:
     - mix run priv/repo/seeds.exs
 
-  test:
+  backend.test:
     cmds:
       - mix test
 
-  test.wip:
+  backend.test.wip:
     cmds:
       - mix test --only wip
 
+  frontend.test:
+    dir: ./assets
+    cmds:
+      - elm-test
+
+  frontend.test.watch:
+    dir: ./assets
+    cmds:
+      - elm-test --watch
   help:
     - echo "Hey"

@@ -1,16 +1,10 @@
-module Router exposing (Route(..), fromUrl, linkTo)
+module Router exposing (fromUrl, linkTo)
 
 import Html exposing (Html, a, text)
 import Html.Attributes exposing (class, href)
+import Types exposing (..)
 import Url exposing (Url)
 import Url.Parser exposing (..)
-
-
-type Route
-    = NotFound
-    | SignUp
-    | LogIn
-    | Index
 
 
 parser : Parser (Route -> a) a

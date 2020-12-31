@@ -1,13 +1,16 @@
-module Main exposing (Model, Msg, init, subscriptions, update, view)
+module Main exposing (Model, Msg, subscriptions, update)
 
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html, a, div, main_, nav, text)
 import Html.Attributes exposing (class, href)
-import Pages.Index as IndexPage
-import Pages.LogIn as LogInPage
-import Pages.SignUp as SignUpPage
-import Router exposing (Route(..), fromUrl, linkTo)
+import Http
+import Pages
+import Pages.Index as Index
+import Pages.LogIn as LogIn
+import Pages.SignUp as SignUp
+import Router exposing (fromUrl, linkTo)
+import Types exposing (..)
 import Url exposing (Url)
 import Url.Parser as Parser exposing (Parser, map, oneOf, s, top)
 
@@ -28,60 +31,51 @@ type alias Flags =
     {}
 
 
-type alias Model =
-    { key : Nav.Key
-    , url : Url.Url
-    , route : Route
-    }
-
-
-type PageModel
-    = SignUpPage SignUpPage.Model
-    | LogInPage LogInPage.Model
+type Model
+    = LogIn LogIn.Model
+    | SignUp SignUp.Model
+    | Index Index.Model
+    | Pages Router
 
 
 type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
-    | GotSignUpMsg SignUpPage.Msg
-    | GotLogInMsg LogInPage.Msg
-    | GotIndexMsg IndexPage.Msg
-
-
-content : Model -> Html Msg
-content model =
-    case model.route of
-        SignUp ->
-            Html.map GotSignUpMsg (SignUpPage.view SignUpPage.init)
-
-        LogIn ->
-            Html.map GotLogInMsg (LogInPage.view LogInPage.init)
-
-        Index ->
-            Html.map GotIndexMsg (IndexPage.view IndexPage.init)
-
-        _ ->
-            Html.map GotIndexMsg (IndexPage.view IndexPage.init)
-
-
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-    ( Model key url Router.NotFound, Cmd.none )
+    | GotIndex Index.Msg
+    | GotSignUp SignUp.Msg
+    | GotLogIn LogIn.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        UrlRequested urlRequest ->
+    case ( msg, model ) of
+        ( UrlRequested urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
-                    ( model, Nav.pushUrl model.key (Url.toString url) )
+                    case url.fragment of
+                        Nothing ->
+                            -- If we got a link that didn't include a fragment,
+                            -- it's from one of those (href "") attributes that
+                            -- we have to include to make the RealWorld CSS work.
+                            --
+                            -- In an application doing path routing instead of
+                            -- fragment-based routing, this entire
+                            -- `case url.fragment of` expression this comment
+                            -- is inside would be unnecessary.
+                            ( model, Cmd.none )
+
+                        Just _ ->
+                            ( model
+                            , Nav.pushUrl (Session.navKey (toSession model)) (Url.toString url)
+                            )
 
                 Browser.External href ->
-                    ( model, Nav.load href )
+                    ( model
+                    , Nav.load href
+                    )
 
-        UrlChanged url ->
-            ( { model | route = fromUrl url }, Cmd.none )
+        ( UrlChanged url, _ ) ->
+            changeRouteTo (Route.fromUrl url) model
 
         _ ->
             ( model, Cmd.none )
@@ -92,38 +86,21 @@ subscriptions model =
     Sub.none
 
 
-navbar : Model -> Html msg
-navbar model =
-    nav [ class "bg-gray-800" ]
-        [ div [ class "max-w-7xl mx-auto px-2 sm:px-6 lg:px-8" ]
-            [ div [ class "relative flex items-center justify-between h-16" ]
-                [ div [ class "flex-1 flex items-center justify-center sm:items-stretch sm:justify-start" ]
-                    [ div [ class "hidden sm:block sm:ml-6" ]
-                        [ div [ class "flex space-x-4" ]
-                            [ linkTo Index model.route
-                            , linkTo SignUp model.route
-                            , linkTo LogIn model.route
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
+init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init _ url key =
+    Pages.init () url key
 
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Chat by Abdul Hamid"
-    , body =
-        [ div [ class "min-h-screen bg-white" ]
-            [ navbar model
-            , div [ class "py-10" ]
-                [ main_ []
-                    [ div [ class "max-w-7xl mx-auto sm:px-6 lg:px-8" ]
-                        [ content model
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    }
+    let
+        viewPage page toMsg =
+            let
+                { title, body } =
+                    Pages.view page
+            in
+            { title = title, body = List.map (Html.map toMsg) body }
+    in
+    case model of
+        Index index ->
+            viewPage Types.Index GotIndex (Index.view index)

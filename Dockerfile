@@ -46,6 +46,6 @@ RUN chown nobody:nogroup /app
 
 USER nobody:nogroup
 
-COPY --from=build --chown=nobody:nogroup /app/_build/prod/rel/ecommerce ./
+COPY --from=build --chown=nobody:nogroup /app/_build/prod/rel/chat ./
 ENV HOME=/app
-CMD ["bin/ecommerce", "start"]
+CMD ["bin/chat", "start"]

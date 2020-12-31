@@ -20,6 +20,10 @@ config :chat, ChatWeb.Endpoint,
   user: Chat.Users.User,
   repo: Chat.Repo
 
+config :chat, :pow,
+  user: Chat.Users.User,
+  repo: Chat.Repo
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

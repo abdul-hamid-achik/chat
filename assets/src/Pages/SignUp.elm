@@ -1,9 +1,9 @@
-module Pages.SignUp exposing (Model, Msg, init, view)
+module Pages.SignUp exposing (Model, Msg, init, update, view)
 
 import Debug
 import Html exposing (Html, a, button, div, form, h2, input, label, p, text)
 import Html.Attributes exposing (class, for, href, id, name, placeholder, type_)
-import Html.Events exposing (onInput, onSubmit)
+import Html.Events exposing (onClick, onInput, onSubmit)
 import Http
 import Json.Decode exposing (list, string)
 import Json.Encode as Encode
@@ -41,6 +41,7 @@ type Msg
     | ConfirmPasswordChange String
     | FormSubmit
     | GotResponse (Result Http.Error (List String))
+    | PreventDefault
 
 
 serializeForm : Form -> Http.Body
@@ -55,6 +56,10 @@ serializeForm form =
 
 submitForm : Model -> Cmd Msg
 submitForm model =
+    let
+        _ =
+            Debug.log "submitting form " model
+    in
     Http.post
         { url = "/sessions"
         , body = serializeForm model.form
@@ -83,7 +88,21 @@ update msg model =
             updateForm (\form -> { form | confirm_password = password }) model
 
         FormSubmit ->
-            ( model, submitForm model )
+            let
+                handle =
+                    submitForm model
+
+                _ =
+                    Debug.log "form submit" handle
+            in
+            ( model, handle )
+
+        GotResponse response ->
+            let
+                _ =
+                    Debug.log "got response" response
+            in
+            ( model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
@@ -104,7 +123,7 @@ view model =
                         ]
                     ]
                 ]
-            , form [ class "mt-8 space-y-6", onSubmit FormSubmit ]
+            , form [ class "mt-8 space-y-6", onSubmit PreventDefault ]
                 [ div [ class "rounded-md shadow-sm -space-y-px" ]
                     [ div []
                         [ label
@@ -154,7 +173,11 @@ view model =
                         ]
                     ]
                 , div []
-                    [ button [ type_ "submit", class "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" ]
+                    [ button
+                        [ type_ "submit"
+                        , class "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        , onClick FormSubmit
+                        ]
                         [ text "Sign Up"
                         ]
                     ]
