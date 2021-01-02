@@ -5,7 +5,7 @@
   "scripts": {
     "deploy": "webpack --mode production",
     "watch": "webpack --mode development --watch",
-    "elm": "elm"
+    "test": "jest"
   },
   "dependencies": {
     "@apollo/client": "^3.3.6",
