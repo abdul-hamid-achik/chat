@@ -28,11 +28,16 @@ module.exports = (env, options) => {
     module: {
       rules: [
         {
-          test: /\.js$/,
+          test: /\.(j|t)sx?$/,
           exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader'
-          }
+          use: [
+            {
+              loader: "babel-loader"
+            },
+            {
+              loader: "ts-loader"
+            }
+          ]
         },
         {
           test: /\.[s]?css$/,
@@ -43,18 +48,12 @@ module.exports = (env, options) => {
             'postcss-loader'
           ],
         },
-        {
-          test: /\.elm$/,
-          exclude: [/elm-stuff/, /node_modules/],
-          use: {
-            loader: 'elm-webpack-loader',
-            options: {
-              debug: options.mode === "development"
-            }
-          }
-        }
       ]
     },
+
+    resolve: {
+      extensions: [".ts", ".tsx", ".js", ".jsx"]
+    }, 
     plugins: [
       new MiniCssExtractPlugin({ filename: '../css/app.css' }),
       new CopyWebpackPlugin([{ from: 'static/', to: '../' }])

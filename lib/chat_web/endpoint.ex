@@ -40,6 +40,14 @@ defmodule ChatWeb.Endpoint do
     cookie_key: "request_logger"
 
   plug Plug.RequestId
+
+  plug Plug.Logger
+
+  plug Plug.Parsers,
+    parsers: [:urlencoded, :multipart, :json, Absinthe.Plug.Parser],
+    pass: ["*/*"],
+    json_decoder: Jason
+
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
   plug Plug.MethodOverride

@@ -39,6 +39,13 @@ defmodule ChatWeb.Router do
     # Your protected API endpoints here
   end
 
+  forward "/grapqhl", Absinthe.Plug, schema: ChatWeb.Schema
+
+  forward "/graphiql",
+          Absinthe.Plug.GraphiQL,
+          schema: ChatWeb.Schema,
+          interface: :simple
+
   scope "/", ChatWeb do
     pipe_through :browser
 
