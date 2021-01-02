@@ -1,20 +1,17 @@
-module Pages exposing (Model, Msg, init, update, view)
+module Pages exposing (Page, view)
 
-import Browser
+import Browser exposing (Document)
 import Browser.Navigation as Nav
 import Html exposing (Html, a, div, main_, nav, text)
 import Html.Attributes exposing (class, href)
 import Pages.Index as IndexPage
 import Pages.LogIn as LogInPage
 import Pages.SignUp as SignUpPage
-import Router exposing (fromUrl, linkTo)
+import Route exposing (fromUrl)
 import Types exposing (..)
 import Url exposing (Url)
 import Url.Parser as Parser exposing (Parser, map, oneOf, s, top)
-
-
-type alias Model =
-    Router
+import Viewer exposing (Viewer)
 
 
 type Msg
@@ -25,46 +22,59 @@ type Msg
     | GotIndexMsg IndexPage.Msg
 
 
-content : Model -> Html Msg
-content model =
-    case model.route of
-        SignUp ->
-            Html.map GotSignUpMsg (SignUpPage.view SignUpPage.init)
+type Page
+    = Other
+    | Index
+    | LogIn
+    | SignUp
+    | Redirect
+    | NotFound
 
-        LogIn ->
-            Html.map GotLogInMsg (LogInPage.view LogInPage.init)
 
-        Index ->
-            Html.map GotIndexMsg (IndexPage.view IndexPage.init)
+isActive : Page -> Route -> Bool
+isActive page route =
+    case ( page, route ) of
+        ( Index, Types.Index ) ->
+            True
+
+        ( LogIn, Types.LogIn ) ->
+            True
+
+        ( SignUp, Types.SignUp ) ->
+            True
 
         _ ->
-            Html.map GotIndexMsg (IndexPage.view IndexPage.init)
+            False
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-    ( Router key url Types.NotFound, Cmd.none )
+getLinkClass : Page -> Route -> String
+getLinkClass page route =
+    case isActive page route of
+        True ->
+            "bg-gray-900 text-white"
+
+        False ->
+            "text-gray-300 hover:bg-gray-700 hover:text-white"
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        _ ->
-            ( model, Cmd.none )
+navbarLink : Page -> Route -> List (Html msg) -> Html msg
+navbarLink page route linkContent =
+    a [ class (getLinkClass page route), Route.href route ] linkContent
 
 
-navbar : Model -> Html msg
-navbar model =
+viewHeader : Page -> Maybe Viewer -> Html msg
+viewHeader page maybeViewer =
     nav [ class "bg-gray-800" ]
         [ div [ class "max-w-7xl mx-auto px-2 sm:px-6 lg:px-8" ]
             [ div [ class "relative flex items-center justify-between h-16" ]
                 [ div [ class "flex-1 flex items-center justify-center sm:items-stretch sm:justify-start" ]
                     [ div [ class "hidden sm:block sm:ml-6" ]
-                        [ div [ class "flex space-x-4" ]
-                            [ linkTo Index model.route
-                            , linkTo SignUp model.route
-                            , linkTo LogIn model.route
-                            ]
+                        [ div [ class "flex space-x-4" ] <|
+                            navbarLink
+                                page
+                                Types.Index
+                                [ text "Index" ]
+                                :: viewMenu page maybeViewer
                         ]
                     ]
                 ]
@@ -72,16 +82,39 @@ navbar model =
         ]
 
 
-view : Model -> Browser.Document Msg
-view model =
-    { title = "Chat by Abdul Hamid"
+viewMenu : Page -> Maybe Viewer -> List (Html msg)
+viewMenu page maybeViewer =
+    let
+        linkTo =
+            navbarLink page
+    in
+    case maybeViewer of
+        Just viewer ->
+            let
+                _ =
+                    Viewer.username viewer
+            in
+            [ linkTo
+                Types.LogOut
+                [ text "Logout" ]
+            ]
+
+        Nothing ->
+            [ linkTo Types.LogIn [ text "Sign in" ]
+            , linkTo Types.SignUp [ text "Sign up" ]
+            ]
+
+
+view : Maybe Viewer -> Page -> { title : String, content : Html msg } -> Document msg
+view maybeViewer page { title, content } =
+    { title = title ++ " - Elm Chat"
     , body =
         [ div [ class "min-h-screen bg-white" ]
-            [ navbar model
+            [ viewHeader page maybeViewer
             , div [ class "py-10" ]
                 [ main_ []
                     [ div [ class "max-w-7xl mx-auto sm:px-6 lg:px-8" ]
-                        [ content model
+                        [ content
                         ]
                     ]
                 ]

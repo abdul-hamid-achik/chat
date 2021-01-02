@@ -1,18 +1,23 @@
-module Main exposing (Model, Msg, subscriptions, update)
+module Main exposing (main)
 
-import Browser
+import Api exposing (Cred)
+import Browser exposing (Document)
 import Browser.Navigation as Nav
 import Html exposing (Html, a, div, main_, nav, text)
 import Html.Attributes exposing (class, href)
 import Http
-import Pages
+import Json.Decode as Decode exposing (Value)
+import Pages exposing (Page)
 import Pages.Index as Index
 import Pages.LogIn as LogIn
 import Pages.SignUp as SignUp
-import Router exposing (fromUrl, linkTo)
+import Route exposing (fromUrl)
+import Session exposing (Session)
 import Types exposing (..)
 import Url exposing (Url)
 import Url.Parser as Parser exposing (Parser, map, oneOf, s, top)
+import Username exposing (Username)
+import Viewer exposing (Viewer)
 
 
 main : Program () Model Msg
@@ -32,10 +37,11 @@ type alias Flags =
 
 
 type Model
-    = LogIn LogIn.Model
+    = Redirect Session
+    | NotFound Session
+    | LogIn LogIn.Model
     | SignUp SignUp.Model
     | Index Index.Model
-    | Pages Router
 
 
 type Msg
@@ -54,14 +60,6 @@ update msg model =
                 Browser.Internal url ->
                     case url.fragment of
                         Nothing ->
-                            -- If we got a link that didn't include a fragment,
-                            -- it's from one of those (href "") attributes that
-                            -- we have to include to make the RealWorld CSS work.
-                            --
-                            -- In an application doing path routing instead of
-                            -- fragment-based routing, this entire
-                            -- `case url.fragment of` expression this comment
-                            -- is inside would be unnecessary.
                             ( model, Cmd.none )
 
                         Just _ ->
@@ -86,9 +84,65 @@ subscriptions model =
     Sub.none
 
 
-init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
-    Pages.init () url key
+init : Maybe Viewer -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init maybeViewer url navKey =
+    changeRouteTo (Route.fromUrl url)
+        (Redirect (Session.fromViewer navKey maybeViewer))
+
+
+toSession : Model -> Session
+toSession page =
+    case page of
+        Redirect session ->
+            session
+
+        NotFound session ->
+            session
+
+        Index index ->
+            Index.toSession index
+
+        LogIn login ->
+            LogIn.toSession login
+
+        SignUp signup ->
+            Register.toSession signup
+
+
+changeRouteTo : Maybe Route -> Model -> ( Model, Cmd Msg )
+changeRouteTo maybeRoute model =
+    let
+        session =
+            toSession model
+    in
+    case maybeRoute of
+        Nothing ->
+            ( NotFound session, Cmd.none )
+
+        Just Types.Root ->
+            ( model, Route.replaceUrl (Session.navKey session) Route.Home )
+
+        Just Types.LogOut ->
+            ( model, Api.logout )
+
+        Just Types.Index ->
+            Index.init session
+                |> updateWith Index GotIndexMsg model
+
+        Just Types.LogIn ->
+            LogIn.init session
+                |> updateWith Login GotLoginMsg model
+
+        Just Types.SignUp ->
+            SignUp.init session
+                |> updateWith SignUp GotSignUpMsg model
+
+
+updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
+updateWith toModel toMsg model ( subModel, subCmd ) =
+    ( toModel subModel
+    , Cmd.map toMsg subCmd
+    )
 
 
 view : Model -> Browser.Document Msg
@@ -103,4 +157,10 @@ view model =
     in
     case model of
         Index index ->
-            viewPage Types.Index GotIndex (Index.view index)
+            viewPage Page.Index GotIndex (Index.view index)
+
+        LogIn login ->
+            viewPage Pages.Other GotLoginMsg (Login.view login)
+
+        Register register ->
+            viewPage Page.Other GotRegisterMsg (Register.view register)

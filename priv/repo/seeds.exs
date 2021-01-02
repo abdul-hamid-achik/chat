@@ -9,3 +9,11 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+import Chat.Factory
+
+Chat.Users.create(%{
+  email: "abdulachik@gmail.com",
+  password: "password",
+  password_confirmation: "password",
+  password_hash: Pow.Ecto.Schema.Password.pbkdf2_hash("password")
+})
