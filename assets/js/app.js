@@ -13,3 +13,10 @@ import "../css/app.scss"
 //     import socket from "./socket"
 //
 import "phoenix_html"
+
+import App from "./main.tsx"
+import React from "react"
+import { render } from "react-dom"
+
+window.onload = () => 
+	render(<App />, document.getElementById("main"))

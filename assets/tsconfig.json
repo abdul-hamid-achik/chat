@@ -1,15 +1,19 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "ESNext",
+    "module": "esnext",
+    "moduleResolution": "node",
     "allowJs": true,
+    "noImplicitAny": false,
     "jsx": "react",
     "outDir": "./dist/",
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "~/*": ["./js/*"]
+    }
   },
-  "exclude": [
-    "/node_modules/**/*",
-  ]
+  "exclude": ["/node_modules/**/*"],
+  "include": ["./js/**/*.ts", "./js/**/*.tsx", "./js/**/*.js"]
 }

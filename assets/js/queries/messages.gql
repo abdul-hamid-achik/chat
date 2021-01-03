@@ -1,0 +1,6 @@
+query Messages {
+  message {
+    content
+    creator
+  }
+}

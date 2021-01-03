@@ -17,7 +17,7 @@ defmodule Chat.Users do
       [%User{}, ...]
 
   """
-  def lists do
+  def list do
     Repo.all(User)
   end
 

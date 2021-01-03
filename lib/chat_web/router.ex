@@ -39,7 +39,7 @@ defmodule ChatWeb.Router do
     # Your protected API endpoints here
   end
 
-  forward "/grapqhl", Absinthe.Plug, schema: ChatWeb.Schema
+  forward "/graphql", Absinthe.Plug, schema: ChatWeb.Schema
 
   forward "/graphiql",
           Absinthe.Plug.GraphiQL,
