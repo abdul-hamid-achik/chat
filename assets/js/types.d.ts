@@ -8,8 +8,8 @@ interface User {
 }
 
 interface Message {
-    creator?: User
-    creator_id: string
+    user?: User
+    user_id: string
     content: string
     inserted_at: Date
     updated_at: Date

@@ -44,7 +44,6 @@ defmodule ChatWeb.Schema.Schema do
 
     @desc "Create Message"
     field :create_message, :message do
-      arg(:creator_id, non_null(:id))
       arg(:content, non_null(:string))
 
       middleware(Middleware.Authenticate)
@@ -54,7 +53,8 @@ defmodule ChatWeb.Schema.Schema do
 
   object :message do
     field(:id, :id)
-    field(:message, :string)
+    field(:content, non_null(:string))
+    field :user, non_null(:user)
   end
 
   object :user do

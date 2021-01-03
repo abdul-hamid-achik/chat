@@ -1,0 +1,9 @@
+mutation CreateMessageMutation($content: String!) {
+  create_message(content: $content) {
+    id
+    content
+    user {
+      email
+    }
+  }
+}

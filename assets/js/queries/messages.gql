@@ -1,6 +1,9 @@
 query Messages {
-  message {
+  messages {
+    id
     content
-    creator
+    user {
+      email
+    }
   }
 }

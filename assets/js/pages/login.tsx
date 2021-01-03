@@ -7,6 +7,7 @@ import {
 import LOGIN_MUTATION from '~/mutations/login.gql'
 import { useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
+import Error from '~/components/error'
 
 interface LoginMutation {
 	login: {
@@ -16,7 +17,7 @@ interface LoginMutation {
 }
 
 export default () => {
-	const [login, { error, loading, data }] = useMutation<LoginMutation>(LOGIN_MUTATION)
+	const [login, { error, data }] = useMutation<LoginMutation>(LOGIN_MUTATION)
 	const history = useHistory()
 	const [email, setEmail] = React.useState<string>("")
 	const [password, setPassword] = React.useState<string>("")
@@ -34,6 +35,7 @@ export default () => {
 	}, [data])
 
 	return <Layout>
+		<Error error={error} />
 		<div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
 				<h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -61,7 +63,7 @@ export default () => {
 									type="email"
 									autoComplete="email"
 									required
-									className="appearance-none ßblock w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+									className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
 							</div>
 						</div>
 

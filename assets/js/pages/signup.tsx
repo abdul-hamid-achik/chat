@@ -6,18 +6,29 @@ import {
 } from "react-router-dom";
 import SIGN_UP_MUTATION from '~/mutations/signup.gql'
 import { useMutation } from '@apollo/client'
+import { useHistory } from 'react-router-dom'
+import Error from '~/components/error'
 
 export default () => {
-	const [signup, { error, loading, data }] = useMutation(SIGN_UP_MUTATION)
+	const [sign_up, { data }] = useMutation(SIGN_UP_MUTATION)
+	const history = useHistory()
 	const [email, setEmail] = React.useState<string>("")
 	const [password, setPassword] = React.useState<string>("")
-	const [passwordConfirmation, setPasswordConfirmation] = React.useState<string>("")
+	const [password_confirmation, setPasswordConfirmation] = React.useState<string>("")
 
 	const handleSubmit = event => {
 		event.preventDefault()
-		signup({ variables: { email, password, passwordConfirmation } })
+		sign_up({ variables: { email, password, password_confirmation } })
 	}
-	console.log(error, loading, data)
+
+	React.useEffect(() => {
+		if (data && data.login) {
+			localStorage.setItem("auth-token", data.login.token)
+			history.push("/")
+		}
+	}, [data])
+
+
 	return <Layout>
 		<div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -40,6 +51,7 @@ export default () => {
         					</label>
 							<div className="mt-1">
 								<input
+									onChange={event => setEmail(event.target.value)}
 									id="email"
 									name="email"
 									type="email"
@@ -55,6 +67,7 @@ export default () => {
         					</label>
 							<div className="mt-1">
 								<input
+									onChange={event => setPassword(event.target.value)}
 									id="password"
 									name="password"
 									type="password"
@@ -69,7 +82,14 @@ export default () => {
 								Confirmation Password
         					</label>
 							<div className="mt-1">
-								<input id="password_confirmation" name="password_confirmation" type="password" autoComplete="current-password" required className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+								<input
+									onChange={event => setPasswordConfirmation(event.target.value)}
+									id="password_confirmation"
+									name="password_confirmation"
+									type="password"
+									autoComplete="current-password"
+									required
+									className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
 							</div>
 						</div>
 
