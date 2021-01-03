@@ -11,7 +11,17 @@
 # and so on) as they will fail if something goes wrong.
 import Chat.Factory
 
-Chat.Users.create(%{
-  email: "abdulachik@gmail.com",
-  password_hash: Pow.Ecto.Schema.Password.pbkdf2_hash("password")
-})
+user =
+  insert(:user,
+    email: "abdulachik@gmail.com"
+  )
+
+conversation = insert(:conversation)
+messages = insert_list(5, :message, conversation: conversation)
+
+insert(:conversation_member, conversation: conversation, user: user, owner: true)
+
+Enum.each(
+  messages,
+  &insert(:conversation_member, user: &1.user, conversation: conversation, owner: false)
+)

@@ -4,19 +4,20 @@ import Form from "~/components/form"
 import {
 	Link
 } from "react-router-dom";
-import SIGN_UP_MUTATION from '~/mutations/signup.gql'
+import SIGN_UP_MUTATION from '~/mutations/sign-up.gql'
 import { useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 import Error from '~/components/error'
+import Loading from "~/components/loading";
 
 export default () => {
-	const [sign_up, { data }] = useMutation(SIGN_UP_MUTATION)
+	const [sign_up, { error, loading, data }] = useMutation(SIGN_UP_MUTATION)
 	const history = useHistory()
 	const [email, setEmail] = React.useState<string>("")
 	const [password, setPassword] = React.useState<string>("")
 	const [password_confirmation, setPasswordConfirmation] = React.useState<string>("")
 
-	const handleSubmit = event => {
+	const handleSubmit = (event: React.SyntheticEvent) => {
 		event.preventDefault()
 		sign_up({ variables: { email, password, password_confirmation } })
 	}
@@ -30,6 +31,7 @@ export default () => {
 
 
 	return <Layout>
+		<Error error={error} />
 		<div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
 				<h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -103,9 +105,9 @@ export default () => {
 						</div>
 
 						<div>
-							<button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-								Sign Up
-        					</button>
+							<button type="submit" disabled={loading} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+								Sign Up <Loading loading={loading} />
+							</button>
 						</div>
 					</Form>
 

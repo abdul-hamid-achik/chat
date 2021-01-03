@@ -1,5 +1,5 @@
-mutation CreateMessageMutation($content: String!) {
-  create_message(content: $content) {
+mutation CreateMessageMutation($content: String!, $conversation_id: Number!) {
+  create_message(content: $content, conversation_id: $conversation_id) {
     id
     content
     user {

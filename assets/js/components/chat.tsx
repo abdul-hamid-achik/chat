@@ -1,24 +1,48 @@
 import React from "react"
-import { useMutation } from '@apollo/client'
-import CREATE_MESSAGE_MUTATION from '~/mutations/create_message.gql'
-import ChatMessage from "~/components/chat_message"
+import { useQuery, useMutation } from '@apollo/client'
+import ReactTimeAgo from 'react-time-ago'
 import Error from '~/components/error'
+import Loading from '~/components/loading'
+import CREATE_MESSAGE_MUTATION from '~/mutations/create_message.gql'
+import GET_MESSAGES from '~/queries/messages.gql'
 
 interface ChatProps {
-    messages: Array<Message>
+    conversation: Conversation
 }
 
+const ChatMessage: React.FC<Message> = props =>
+    <div className="flex space-x-3">
+        <img className="h-6 w-6 rounded-full" src="" alt="" />
+        <div className="flex-1 space-y-1">
+            <div className="flex items-center justify-between">
+                {props.user ?
+                    <h3 className="text-sm font-medium">{props.user.email}</h3> :
+                    <h3 className="text-sm font-medium">{props.user_id}</h3>
+                }
+                <p className="text-sm text-gray-500">
+                    <ReactTimeAgo date={props.inserted_at} locale="en-US" />
+                </p>
+            </div>
+            <p className="text-sm text-gray-500">{props.content}</p>
+        </div>
+    </div>
+
 const Chat: React.FC<ChatProps> = (props) => {
+    const { loading: loadingMessages, error: errorMessages, data } = useQuery(GET_MESSAGES, { variables: { conversation_id: props.conversation.id } })
     const [content, setContent] = React.useState<string>("")
-    const [send_message, { error, loading, data }] = useMutation(CREATE_MESSAGE_MUTATION)
+    const [send_message, { error, loading }] = useMutation(CREATE_MESSAGE_MUTATION)
     const handleSend = () => {
-        send_message({ variables: { content } })
+        setContent("")
+        send_message({ variables: { content, conversation_id: props.conversation.id } })
     }
+
     return <div>
         <Error error={error} />
-        {loading && <h4 className="py-4">Sending Message</h4>}
+        <Error error={errorMessages} />
+        <Loading message="Sending" loading={loading} />
+        <Loading message="Loading" loading={loadingMessages} />
         <ul className="divide-y divide-gray-200">
-            {props.messages.map(message => <li className="py-4">
+            {(data && data.messages || []).map(message => <li className="py-4">
                 <ChatMessage {...message} />
             </li>)}
         </ul>

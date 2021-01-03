@@ -1,0 +1,10 @@
+query Conversations {
+  conversations {
+    id
+    title
+    messages {
+      id
+      inserted_at
+    }
+  }
+}

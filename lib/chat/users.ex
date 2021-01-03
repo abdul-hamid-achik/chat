@@ -105,10 +105,12 @@ defmodule Chat.Users do
   and the password is valid. Otherwise, `:error` is returned.
   """
   def authenticate(email, password) do
-    user = Repo.get_by(User, email: email)
-
-    case user.__struct__.verify_password(user, password) do
-      true -> {:ok, user}
+    with %User{} = user <- Repo.get_by(User, email: email) do
+      case user.__struct__.verify_password(user, password) do
+        true -> {:ok, user}
+        _ -> :error
+      end
+    else
       _ -> :error
     end
   end

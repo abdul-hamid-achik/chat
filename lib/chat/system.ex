@@ -209,8 +209,14 @@ defmodule Chat.System do
       [%Message{}, ...]
 
   """
-  def list_chat_messages do
-    Repo.all(Message)
+  def list_chat_messages(nil), do: []
+
+  def list_chat_messages(conversation_id) do
+    query =
+      from m in Message,
+        where: m.conversation_id == ^conversation_id
+
+    Repo.all(query)
   end
 
   @doc """

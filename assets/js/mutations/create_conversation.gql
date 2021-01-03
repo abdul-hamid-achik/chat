@@ -1,0 +1,6 @@
+mutation CreateConversationMutation($title: String!) {
+  create_conversation(title: $title) {
+    id
+    title
+  }
+}

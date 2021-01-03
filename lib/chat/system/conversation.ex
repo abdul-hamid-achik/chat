@@ -5,8 +5,7 @@ defmodule Chat.System.Conversation do
 
   schema "conversations" do
     field :title, :string
-
-    has_many :conversation_members, ConversationMember
+    has_many :members, ConversationMember
     has_many :messages, Message
     timestamps()
   end

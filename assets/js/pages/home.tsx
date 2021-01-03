@@ -1,15 +1,15 @@
 import React from "react"
 import Layout from "~/shared/layout"
-import { useQuery } from '@apollo/client';
-import GET_MESSAGES from '~/queries/messages.gql'
 import Chat from '~/components/chat'
-import Error from '~/components/error'
+import { useSelector } from "react-redux"
+import { RootState } from "~/store"
 
 
 export default () => {
-	const { loading, error, data } = useQuery(GET_MESSAGES)
+	const conversation = useSelector((store: RootState) => store.layout.conversation)
+	const user = useSelector((store: RootState) => store.layout.user)
 	return <Layout>
-		<Error error={error} />
-		{!loading ? <Chat messages={data.messages} /> : <h4 className="py-4">Loading...</h4>}
+		{user && conversation && conversation.id &&
+			<Chat conversation={conversation} />}
 	</Layout>
 }

@@ -4,7 +4,7 @@ defmodule Chat.Users.User do
 
   schema "users" do
     pow_user_fields()
-
+    has_many :conversations, Chat.System.ConversationMember
     timestamps()
   end
 end

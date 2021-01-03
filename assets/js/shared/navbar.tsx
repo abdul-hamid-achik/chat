@@ -1,16 +1,27 @@
 import React from "react"
-import { useQuery } from '@apollo/client';
-import GET_ME from '~/queries/me.gql'
 import {
 	Link
 } from "react-router-dom"
+import { useApolloClient } from "@apollo/client"
+import { useHistory } from 'react-router-dom'
+import { layout, useAppDispatch } from "~/store"
 
-interface MeQuery {
-	me?: User
+interface NavbarProps {
+	user?: User
 }
 
-export default () => {
-	const { data } = useQuery<MeQuery>(GET_ME)
+const Navbar: React.FC<NavbarProps> = (props) => {
+	const client = useApolloClient()
+	const history = useHistory()
+	const dispatch = useAppDispatch()
+
+	const handleLogout = () => {
+		localStorage.removeItem("auth-token")
+		client.resetStore()
+		history.push("/")
+		dispatch(layout.actions.setUser())
+	}
+
 	return <nav className="flex-shrink-0 bg-indigo-600">
 		<div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
 			<div className="relative flex items-center justify-between h-16">
@@ -29,7 +40,7 @@ export default () => {
 							<Link className="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white" to="/">
 								Home
 							</Link>
-							{(!data || !data.me) && <>
+							{!props.user ? <>
 								<Link className="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white" to="/login">
 									Log in
 								</Link>
@@ -37,8 +48,12 @@ export default () => {
 								<Link className="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white" to="/sign-up">
 									Sign up
 								</Link>
-							</>}
-
+							</> : <>
+									<a
+										href="#"
+										onClick={handleLogout}
+										className="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white">Exit</a>
+								</>}
 						</div>
 					</div>
 				</div>
@@ -60,3 +75,5 @@ export default () => {
 		</div>
 	</nav>
 }
+
+export default Navbar

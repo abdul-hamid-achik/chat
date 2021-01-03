@@ -9,7 +9,12 @@ defmodule ChatWeb.Schema.Schema do
   query do
     @desc "Get all messages"
     field :messages, list_of(:message) do
+      arg(:conversation_id, non_null(:id))
       resolve(&Resolvers.System.list_chat_messages/3)
+    end
+
+    field :conversations, list_of(:conversation) do
+      resolve(&Resolvers.System.list_conversations/3)
     end
 
     @desc "Get all users"
@@ -49,18 +54,41 @@ defmodule ChatWeb.Schema.Schema do
       middleware(Middleware.Authenticate)
       resolve(&Resolvers.System.create_message/3)
     end
+
+    @desc "Create Conversation"
+    field :create_conversation, :conversation do
+      arg(:title, non_null(:string))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Resolvers.System.create_conversation/3)
+    end
+  end
+
+  object :conversation_member do
+    field :id, :id
+    field :user, non_null(:user)
+    field :conversation, non_null(:conversation)
+    field :owner, :boolean
+  end
+
+  object :conversation do
+    field :id, :id
+    field :title, :string
+    field :conversation_members, list_of(:conversation_member)
+    field :messages, list_of(:message)
   end
 
   object :message do
-    field(:id, :id)
-    field(:content, non_null(:string))
+    field :id, :id
+    field :content, non_null(:string)
     field :user, non_null(:user)
+    field :inserted_at, :date
   end
 
   object :user do
-    field(:id, :id)
-    field(:email, :string)
-    field(:password, :string)
+    field :id, :id
+    field :email, :string
+    field :password, :string
   end
 
   object :session do

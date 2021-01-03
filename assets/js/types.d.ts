@@ -8,11 +8,21 @@ interface User {
 }
 
 interface Message {
+    id: string
     user?: User
     user_id: string
+    conversation_id: string
     content: string
     inserted_at: Date
     updated_at: Date
+}
+
+interface Conversation {
+    id: string
+    title: string
+    members?: User[]
+    messages?: Message[]
+    owner?: User
 }
 
 type AuthToken = string

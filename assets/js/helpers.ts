@@ -2,10 +2,6 @@ import { useMemo } from "react"
 import { useParams, useLocation, useHistory, useRouteMatch } from 'react-router-dom'
 import queryString from 'query-string'
 
-export const timeSince: (date: Date) => string = (date) => {
-    return date.toUTCString()
-}
-
 export function useRouter() {
     const params = useParams()
     const location = useLocation()
