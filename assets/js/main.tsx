@@ -4,31 +4,22 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
+import { ApolloProvider } from '@apollo/client'
 import Pages from "~/pages"
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
-
-const client = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache()
-})
+import client from "~/client"
 
 interface Props {
 
 }
 
 const App: React.FC<Props> = props =>
+  // @ts-ignore
   <ApolloProvider client={client}>
     <Router>
       <Switch>
-        <Route exact path="/">
-          <Pages.Home />
-        </Route>
-        <Route path="/login">
-          <Pages.LogIn />
-        </Route>
-        <Route path="/signup">
-          <Pages.SignUp />
-        </Route>
+        <Route exact path="/" component={Pages.Home} />
+        <Route path="/sign-up" component={Pages.SignUp} />
+        <Route path="/login" component={Pages.LogIn} />
       </Switch>
     </Router>
   </ApolloProvider>

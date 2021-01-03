@@ -7,7 +7,7 @@ const ChatMessage: React.FC<Message> = props =>
         <div className="flex-1 space-y-1">
             <div className="flex items-center justify-between">
                 {props.creator ?
-                    <h3 className="text-sm font-medium">{props.creator.first_name}</h3> :
+                    <h3 className="text-sm font-medium">{props.creator.email}</h3> :
                     <h3 className="text-sm font-medium">{props.creator_id}</h3>
                 }
                 <p className="text-sm text-gray-500">{timeSince(props.inserted_at)}</p>

@@ -13,7 +13,5 @@ import Chat.Factory
 
 Chat.Users.create(%{
   email: "abdulachik@gmail.com",
-  password: "password",
-  password_confirmation: "password",
   password_hash: Pow.Ecto.Schema.Password.pbkdf2_hash("password")
 })

@@ -53,11 +53,16 @@ module.exports = (env, options) => {
           exclude: /node_modules/,
           loader: "graphql-tag/loader",
         },
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: "javascript/auto",
+        },
       ],
     },
 
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"],
+      extensions: ["*", ".mjs", ".ts", ".tsx", ".js", ".gql", ".jsx"],
       alias: {
         "~": path.resolve(__dirname, "js"),
       },

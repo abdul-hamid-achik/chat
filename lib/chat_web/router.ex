@@ -12,8 +12,7 @@ defmodule ChatWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-
-    plug ChatWeb.APIAuthPlug, otp_app: :chat
+    plug ChatWeb.Plugs.SetCurrentUser
   end
 
   pipeline :protected do
@@ -21,30 +20,16 @@ defmodule ChatWeb.Router do
       error_handler: Pow.Phoenix.PlugErrorHandler
   end
 
-  pipeline :api_protected do
-    plug Pow.Plug.RequireAuthenticated, error_handler: MyAppWeb.APIAuthErrorHandler
-  end
-
-  scope "/api/v1", ChatWeb.API.V1, as: :api_v1 do
+  scope "/api" do
     pipe_through :api
+    forward "/graphql", Absinthe.Plug, schema: ChatWeb.Schema.Schema
 
-    resources "/registration", RegistrationController, singleton: true, only: [:create]
-    resources "/session", SessionController, singleton: true, only: [:create, :delete]
-    post "/session/renew", SessionController, :renew
+    forward "/graphiql",
+            Absinthe.Plug.GraphiQL,
+            interface: :simple,
+            schema: ChatWeb.Schema.Schema,
+            socket: GetawaysWeb.UserSocket
   end
-
-  scope "/api/v1", ChatWeb.API.V1, as: :api_v1 do
-    pipe_through [:api, :api_protected]
-
-    # Your protected API endpoints here
-  end
-
-  forward "/graphql", Absinthe.Plug, schema: ChatWeb.Schema
-
-  forward "/graphiql",
-          Absinthe.Plug.GraphiQL,
-          schema: ChatWeb.Schema,
-          interface: :simple
 
   scope "/", ChatWeb do
     pipe_through :browser

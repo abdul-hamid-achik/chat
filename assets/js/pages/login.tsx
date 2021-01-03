@@ -6,17 +6,32 @@ import {
 } from "react-router-dom"
 import LOGIN_MUTATION from '~/mutations/login.gql'
 import { useMutation } from '@apollo/client'
+import { useHistory } from 'react-router-dom'
+
+interface LoginMutation {
+	login: {
+		user: User,
+		token: AuthToken
+	}
+}
 
 export default () => {
-	const [login, { data }] = useMutation(LOGIN_MUTATION)
+	const [login, { error, loading, data }] = useMutation<LoginMutation>(LOGIN_MUTATION)
+	const history = useHistory()
 	const [email, setEmail] = React.useState<string>("")
 	const [password, setPassword] = React.useState<string>("")
-	const [passwordConfirmation, setPasswordConfirmation] = React.useState<string>("")
 
 	const handleSubmit = event => {
 		event.preventDefault()
 		login({ variables: { email, password } })
 	}
+
+	React.useEffect(() => {
+		if (data && data.login) {
+			localStorage.setItem("auth-token", data.login.token)
+			history.push("/")
+		}
+	}, [data])
 
 	return <Layout>
 		<div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">

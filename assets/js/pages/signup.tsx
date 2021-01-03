@@ -4,11 +4,11 @@ import Form from "~/components/form"
 import {
 	Link
 } from "react-router-dom";
-import SIGNUP_MUTATION from '~/mutations/login.gql'
+import SIGN_UP_MUTATION from '~/mutations/signup.gql'
 import { useMutation } from '@apollo/client'
 
 export default () => {
-	const [signup, { data }] = useMutation(SIGNUP_MUTATION)
+	const [signup, { error, loading, data }] = useMutation(SIGN_UP_MUTATION)
 	const [email, setEmail] = React.useState<string>("")
 	const [password, setPassword] = React.useState<string>("")
 	const [passwordConfirmation, setPasswordConfirmation] = React.useState<string>("")
@@ -17,7 +17,7 @@ export default () => {
 		event.preventDefault()
 		signup({ variables: { email, password, passwordConfirmation } })
 	}
-
+	console.log(error, loading, data)
 	return <Layout>
 		<div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">

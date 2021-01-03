@@ -51,6 +51,7 @@ defmodule Chat.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:absinthe, "~> 1.5"},
       {:absinthe_plug, "~> 1.5"},
+      {:absinthe_phoenix, "~> 2.0.0"},
       {:pow, "~> 1.0.21"}
     ]
   end

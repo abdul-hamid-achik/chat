@@ -97,4 +97,19 @@ defmodule Chat.Users do
   def change(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
+
+  @doc """
+  Authenticates a user.
+
+  Returns `{:ok, user}` if a user exists with the given username
+  and the password is valid. Otherwise, `:error` is returned.
+  """
+  def authenticate(email, password) do
+    user = Repo.get_by(User, email: email)
+
+    case user.__struct__.verify_password(user, password) do
+      true -> {:ok, user}
+      _ -> :error
+    end
+  end
 end

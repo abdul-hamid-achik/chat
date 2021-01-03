@@ -4,6 +4,10 @@ mutation SignUpMutation($email: String!, $password: String!) {
     password: $password
     password_confirm: $password_confirm
   ) {
-    data
+    token
+    user {
+      id
+      email
+    }
   }
 }

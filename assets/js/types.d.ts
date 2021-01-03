@@ -1,9 +1,10 @@
 interface User {
-    avatar: string
+    id: string
     email: string
-    username: string
-    first_name: string
-    last_name: string
+    avatar?: string
+    username?: string
+    first_name?: string
+    last_name?: string
 }
 
 interface Message {
@@ -13,6 +14,8 @@ interface Message {
     inserted_at: Date
     updated_at: Date
 }
+
+type AuthToken = string
 
 declare module '*.gql' {
     import { DocumentNode } from 'graphql'

@@ -26,7 +26,7 @@ export default () => <nav className="flex-shrink-0 bg-indigo-600">
 							Log in
 						</Link>
 
-						<Link className="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white" to="/signup">
+						<Link className="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white" to="/sign-up">
 							Sign up
 						</Link>
 					</div>
