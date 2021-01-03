@@ -1,6 +1,6 @@
 import React from "react"
 import { useQuery } from '@apollo/client';
-import GET_ME from '~/queries/me.gql'\
+import GET_ME from '~/queries/me.gql'
 import {
 	Link
 } from "react-router-dom"
