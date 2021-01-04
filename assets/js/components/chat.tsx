@@ -20,7 +20,7 @@ const ChatMessage: React.FC<Message> = props =>
                     <h3 className="text-sm font-medium">{props.user_id}</h3>
                 }
                 <p className="text-sm text-gray-500">
-                    <ReactTimeAgo date={props.inserted_at} locale="en-US" />
+                    <ReactTimeAgo date={props.insertedAt} locale="en-US" />
                 </p>
             </div>
             <p className="text-sm text-gray-500">{props.content}</p>
@@ -28,6 +28,7 @@ const ChatMessage: React.FC<Message> = props =>
     </div>
 
 const Chat: React.FC<ChatProps> = (props) => {
+    console.log(props)
     const { loading: loadingMessages, error: errorMessages, data } = useQuery(GET_MESSAGES, { variables: { conversation_id: props.conversation.id } })
     const [content, setContent] = React.useState<string>("")
     const [send_message, { error, loading }] = useMutation(CREATE_MESSAGE_MUTATION)
@@ -42,7 +43,7 @@ const Chat: React.FC<ChatProps> = (props) => {
         <Loading message="Sending" loading={loading} />
         <Loading message="Loading" loading={loadingMessages} />
         <ul className="divide-y divide-gray-200">
-            {(data && data.messages || []).map(message => <li className="py-4">
+            {(data && data.messages || []).map(message => <li key={message.id} className="py-4">
                 <ChatMessage {...message} />
             </li>)}
         </ul>

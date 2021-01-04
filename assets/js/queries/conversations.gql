@@ -4,7 +4,7 @@ query Conversations {
     title
     messages {
       id
-      inserted_at
+      insertedAt
     }
   }
 }

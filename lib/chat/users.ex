@@ -114,4 +114,18 @@ defmodule Chat.Users do
       _ -> :error
     end
   end
+
+  def datasource() do
+    Dataloader.Ecto.new(Repo, query: &query/2)
+  end
+
+  def query(User, %{limit: limit}) do
+    Message
+    |> order_by(asc: :inserted_at)
+    |> limit(^limit)
+  end
+
+  def query(queryable, _) do
+    queryable
+  end
 end

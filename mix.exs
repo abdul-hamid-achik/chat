@@ -41,6 +41,7 @@ defmodule Chat.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:ex_machina, "~> 2.4"},
       {:faker, "~> 0.16"},
+      {:dataloader, "~> 1.0.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_dashboard, "~> 0.2"},

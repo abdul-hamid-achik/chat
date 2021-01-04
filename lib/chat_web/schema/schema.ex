@@ -1,10 +1,12 @@
 defmodule ChatWeb.Schema.Schema do
   use Absinthe.Schema
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1, dataloader: 3]
 
   import_types(Absinthe.Type.Custom)
 
   alias ChatWeb.Resolvers
   alias ChatWeb.Schema.Middleware
+  alias Chat.{Users, System}
 
   query do
     @desc "Get all messages"
@@ -66,23 +68,32 @@ defmodule ChatWeb.Schema.Schema do
 
   object :conversation_member do
     field :id, :id
-    field :user, non_null(:user)
-    field :conversation, non_null(:conversation)
+    field :user, non_null(:user), resolve: dataloader(Users)
+    field :conversation, non_null(:conversation), resolve: dataloader(System)
     field :owner, :boolean
   end
 
   object :conversation do
     field :id, :id
     field :title, :string
-    field :conversation_members, list_of(:conversation_member)
-    field :messages, list_of(:message)
+    field :inserted_at, :naive_datetime
+
+    field :members, list_of(:conversation_member) do
+      arg(:limit, type: :integer, default_value: 100)
+      resolve(dataloader(System, :members, []))
+    end
+
+    field :messages, list_of(:message) do
+      arg(:limit, type: :integer, default_value: 100)
+      resolve(dataloader(System, :messages, []))
+    end
   end
 
   object :message do
     field :id, :id
     field :content, non_null(:string)
-    field :user, non_null(:user)
-    field :inserted_at, :date
+    field :user, non_null(:user), resolve: dataloader(Users)
+    field :inserted_at, :naive_datetime
   end
 
   object :user do
@@ -92,7 +103,20 @@ defmodule ChatWeb.Schema.Schema do
   end
 
   object :session do
-    field :user, non_null(:user)
+    field :user, non_null(:user), resolve: dataloader(Users)
     field :token, non_null(:string)
+  end
+
+  def context(ctx) do
+    loader =
+      Dataloader.new()
+      |> Dataloader.add_source(Users, Users.datasource())
+      |> Dataloader.add_source(System, System.datasource())
+
+    Map.put(ctx, :loader, loader)
+  end
+
+  def plugins do
+    [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
   end
 end

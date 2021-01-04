@@ -1,7 +1,7 @@
 defmodule ChatWeb.Resolvers.System do
   alias ChatWeb.Schema.ChangesetErrors
 
-  def list_chat_messages(_parent, %{"conversation_id" => conversation_id}, _resolution) do
+  def list_chat_messages(_parent, %{conversation_id: conversation_id}, _resolution) do
     {:ok, Chat.System.list_chat_messages(conversation_id)}
   end
 

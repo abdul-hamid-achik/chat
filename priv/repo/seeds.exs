@@ -16,12 +16,15 @@ user =
     email: "abdulachik@gmail.com"
   )
 
-conversation = insert(:conversation)
-messages = insert_list(5, :message, conversation: conversation)
+conversations = insert_list(3, :conversation)
 
-insert(:conversation_member, conversation: conversation, user: user, owner: true)
+Enum.each(conversations, fn conversation ->
+  messages = insert_list(5, :message, conversation: conversation)
 
-Enum.each(
-  messages,
-  &insert(:conversation_member, user: &1.user, conversation: conversation, owner: false)
-)
+  insert(:conversation_member, conversation: conversation, user: user, owner: true)
+
+  Enum.each(
+    messages,
+    &insert(:conversation_member, user: &1.user, conversation: conversation, owner: false)
+  )
+end)

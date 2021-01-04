@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComments, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Error from "~/components/error"
 import Loading from "~/components/loading"
+import { layout, useAppDispatch } from "~/store"
 import GET_CONVERSATIONS from "~/queries/conversations.gql"
 import CREATE_CONVERSATION from "~/mutations/create_conversation.gql"
 interface ConversationsProps {
@@ -15,11 +16,16 @@ interface ConversationsQuery {
 
 
 const Conversations: React.FC<ConversationsProps> = props => {
+    const dispatch = useAppDispatch()
     const { loading, error, data } = useQuery<ConversationsQuery>(GET_CONVERSATIONS)
     const [title, setTitle] = React.useState<string>("")
     const [create, { loading: createLoading, error: createError, data: createConversation }] = useMutation(CREATE_CONVERSATION)
     const handleCreate = () => {
         create({ variables: { title } })
+        setTitle("")
+    }
+    const handleConversationEnter = (conversation: Conversation) => {
+        dispatch(layout.actions.setConversation(conversation))
         setTitle("")
     }
 
@@ -54,8 +60,9 @@ const Conversations: React.FC<ConversationsProps> = props => {
                     </div>
                 </div>
             </li>
-            {data && data.conversations.map(conversation => <li className="py-4 flex">
-                <img className="h-10 w-10 rounded-full" src="" alt="" />
+            {data && data.conversations.map(conversation => <li key={conversation.id} onClick={() => handleConversationEnter(conversation)} className="py-4 flex hover:text-gray-400 cursor-pointer">
+                {/* <img className="h-10 w-10 rounded-full" src="" alt="" /> */}
+                <FontAwesomeIcon icon={faComments} className="h-10 w-10 rounded-full" />
                 <div className="ml-3">
                     <p className="text-sm font-medium text-gray-900">{conversation.title}</p>
                     {conversation.owner && <p className="text-sm text-gray-500">{conversation.owner.email}</p>}

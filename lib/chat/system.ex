@@ -587,4 +587,43 @@ defmodule Chat.System do
   def change_seen_message(%SeenMessage{} = seen_message, attrs \\ %{}) do
     SeenMessage.changeset(seen_message, attrs)
   end
+
+  def datasource() do
+    Dataloader.Ecto.new(Repo, query: &query/2)
+  end
+
+  def query(Conversation, %{limit: limit}) do
+    Conversation
+    |> order_by(desc: :inserted_at)
+    |> limit(^limit)
+  end
+
+  def query(ConversationMember, %{limit: limit}) do
+    ConversationMember
+    |> order_by(desc: :inserted_at)
+    |> limit(^limit)
+  end
+
+  def query(Message, %{user: nil, limit: limit}) do
+    Message
+    |> order_by(asc: :inserted_at)
+    |> limit(^limit)
+  end
+
+  def query(Message, %{limit: limit}) do
+    Message
+    |> order_by(asc: :inserted_at)
+    |> limit(^limit)
+  end
+
+  def query(Message, %{user: user, limit: limit}) do
+    Message
+    |> where(user: ^user)
+    |> order_by(asc: :inserted_at)
+    |> limit(^limit)
+  end
+
+  def query(queryable, _) do
+    queryable
+  end
 end

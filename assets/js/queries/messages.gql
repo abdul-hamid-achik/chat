@@ -2,6 +2,7 @@ query Messages($conversation_id: ID!) {
   messages(conversation_id: $conversation_id) {
     id
     content
+    insertedAt
     user {
       email
     }
