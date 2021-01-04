@@ -43,10 +43,10 @@ const Conversations: React.FC<ConversationsProps> = props => {
             dispatch(layout.actions.setConversations(data.conversations))
     }, [data])
 
-    return props.user ? <>
+    return props.user ? <div style={{ maxHeight: "calc(100vh - 13.75rem)" }}>
         <Error error={error} />
         <Loading loading={loading} />
-        <ul className="divide-y divide-gray-200">
+        <ul className="divide-y divide-gray-200" style={{ minHeight: "calc(100vh - 13.75rem)" }}>
             <li className="py-4 flex">
                 <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">Search Or Create a Conversation</label>
@@ -86,7 +86,7 @@ const Conversations: React.FC<ConversationsProps> = props => {
                 </li>
             )}
         </ul>
-    </> : <></>
+    </div> : <></>
 }
 
 export default Conversations

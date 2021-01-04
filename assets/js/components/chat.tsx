@@ -14,7 +14,7 @@ interface ChatProps {
 }
 
 const ChatMessage: React.FC<Message> = props =>
-    <div className="flex space-x-3">
+    <div className="flex space-x-3 px-6">
         <FontAwesomeIcon icon={faUser} className="h-6 w-6 rounded-full" />
         <div className="flex-1 space-y-1">
             <div className="flex items-center justify-between">
@@ -31,7 +31,11 @@ const ChatMessage: React.FC<Message> = props =>
     </div>
 
 const Chat: React.FC<ChatProps> = (props) => {
-    const { loading: loadingMessages, error: errorMessages, data } = useQuery(GET_MESSAGES, { variables: { conversation_id: props.conversation.id } })
+    const {
+        loading: loadingMessages,
+        error: errorMessages,
+        data
+    } = useQuery(GET_MESSAGES, { variables: { conversation_id: props.conversation.id, pollInterval: 200 } })
     const [content, setContent] = useState<string>("")
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [send_message, { error, loading }] = useMutation(CREATE_MESSAGE_MUTATION)
@@ -54,8 +58,8 @@ const Chat: React.FC<ChatProps> = (props) => {
             <Loading message="Sending" loading={loading} />
             <Loading message="Loading" loading={loadingMessages} />
         </div>
-        <div className="max-h-full">
-            <ul className="divide-y divide-gray-200">
+        <div className="flex-auto overflow-y-scroll" style={{ maxHeight: "calc(100vh - 13.75rem)" }}>
+            <ul className="divide-y divide-gray-200" style={{ minHeight: "calc(100vh - 13.75rem)" }}>
                 {(data && data.messages || []).map(message => <li key={message.id} className="py-4">
                     <ChatMessage {...message} />
                 </li>)}
@@ -73,7 +77,7 @@ const Chat: React.FC<ChatProps> = (props) => {
                 placeholder="Write down a message!">
             </textarea>
         </div>
-        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex-auto">
             <button
                 onClick={handleSend}
                 className="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

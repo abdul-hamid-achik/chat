@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux'
 import { layout, useAppDispatch } from "~/store"
@@ -19,7 +19,7 @@ const Layout: React.FC<Props> = props => {
 	const dispatch = useAppDispatch()
 	const user = useSelector<User>(store => store.layout.user)
 	const { error, loading, data } = useQuery<MeQuery>(GET_ME)
-	React.useEffect(() => {
+	useEffect(() => {
 		if (data && data.me)
 			dispatch(layout.actions.setUser(data.me))
 	}, [data])
@@ -27,7 +27,7 @@ const Layout: React.FC<Props> = props => {
 	return <>
 		<div className="fixed top-0 left-0 w-1/2 h-full bg-white" aria-hidden="true"></div>
 		<div className="fixed top-0 right-0 w-1/2 h-full bg-gray-50" aria-hidden="true"></div>
-		<div className="relative min-h-screen flex flex-col">
+		<div className="relative min-h-screen flex flex-col overflow-y-hidden">
 			{data && <Navbar user={user} />}
 			<div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
 				<div className="flex-1 min-w-0 bg-white xl:flex">
@@ -39,8 +39,8 @@ const Layout: React.FC<Props> = props => {
 						</div>
 					</div>
 
-					<div className="bg-white lg:min-w-0 lg:flex-1 overflow-y-scroll flex-auto">
-						<div className="h-full py-6 px-4 sm:px-6 lg:px-8">
+					<div className="bg-white lg:min-w-0 lg:flex-1">
+						<div className="h-full">
 							<div className="relative h-full" >
 								<Error error={error} />
 								<Loading loading={loading} />
