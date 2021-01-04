@@ -23,7 +23,7 @@ const ChatMessage: React.FC<Message> = props =>
                     <h3 className="text-sm font-medium">{props.user_id}</h3>
                 }
                 <p className="text-sm text-gray-500">
-                    <ReactTimeAgo date={props.insertedAt} locale="en-US" />
+                    <ReactTimeAgo date={new Date(props.insertedAt)} locale="en-US" />
                 </p>
             </div>
             <p className="text-sm text-gray-500">{props.content}</p>

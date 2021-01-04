@@ -62,7 +62,7 @@ const Error: React.FC<any> = ({ error }) => {
         )
     }
 
-    return <div className="rounded-md bg-red-50 p-4">
+    return <div className="rounded-md bg-red-50 p-4 fixed">
         <div className="flex">
             <div className="flex-shrink-0">
                 <FontAwesomeIcon icon={faTimes} className="h-5 w-5 text-red-400" />
