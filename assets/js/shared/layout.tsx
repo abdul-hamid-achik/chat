@@ -39,7 +39,7 @@ const Layout: React.FC<Props> = props => {
 						</div>
 					</div>
 
-					<div className="bg-white lg:min-w-0 lg:flex-1">
+					<div className="bg-white lg:min-w-0 lg:flex-1 overflow-y-scroll flex-auto">
 						<div className="h-full py-6 px-4 sm:px-6 lg:px-8">
 							<div className="relative h-full" >
 								<Error error={error} />
@@ -51,7 +51,7 @@ const Layout: React.FC<Props> = props => {
 				</div>
 
 				<div className="bg-gray-50 pr-4 sm:pr-6 lg:pr-8 lg:flex-shrink-0 lg:border-l lg:border-gray-200 xl:pr-0">
-					<div className="h-full pl-6 py-6 lg:w-80">
+					<div className="h-full pl-6 lg:w-80">
 						<div className="h-full relative" >
 							{user && data && <Conversations user={user} />}
 						</div>

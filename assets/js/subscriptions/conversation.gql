@@ -1,0 +1,9 @@
+subscription WatchConversation($id: ID!) {
+  conversationChange(id: $id) {
+    messages {
+      id
+      content
+      conversationId
+    }
+  }
+}

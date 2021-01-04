@@ -1,9 +1,12 @@
-import React from "react"
-import { useQuery, useMutation } from '@apollo/client'
+import React, { useState, useRef, useEffect } from "react"
+import { useQuery, useMutation, useSubscription } from '@apollo/client'
 import ReactTimeAgo from 'react-time-ago'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Error from '~/components/error'
 import Loading from '~/components/loading'
 import CREATE_MESSAGE_MUTATION from '~/mutations/create_message.gql'
+import CONVERSATION_SUBSCRIPTION from '~/subscriptions/conversation.gql'
 import GET_MESSAGES from '~/queries/messages.gql'
 
 interface ChatProps {
@@ -12,7 +15,7 @@ interface ChatProps {
 
 const ChatMessage: React.FC<Message> = props =>
     <div className="flex space-x-3">
-        <img className="h-6 w-6 rounded-full" src="" alt="" />
+        <FontAwesomeIcon icon={faUser} className="h-6 w-6 rounded-full" />
         <div className="flex-1 space-y-1">
             <div className="flex items-center justify-between">
                 {props.user ?
@@ -28,27 +31,40 @@ const ChatMessage: React.FC<Message> = props =>
     </div>
 
 const Chat: React.FC<ChatProps> = (props) => {
-    console.log(props)
     const { loading: loadingMessages, error: errorMessages, data } = useQuery(GET_MESSAGES, { variables: { conversation_id: props.conversation.id } })
-    const [content, setContent] = React.useState<string>("")
+    const [content, setContent] = useState<string>("")
+    const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [send_message, { error, loading }] = useMutation(CREATE_MESSAGE_MUTATION)
+    const { data: conversationSubscription, loading: isConversationUpdating } = useSubscription(CONVERSATION_SUBSCRIPTION, { variables: { id: props.conversation.id } })
     const handleSend = () => {
         setContent("")
         send_message({ variables: { content, conversation_id: props.conversation.id } })
+        if (textAreaRef.current) textAreaRef.current.value = ""
     }
 
-    return <div>
-        <Error error={error} />
-        <Error error={errorMessages} />
-        <Loading message="Sending" loading={loading} />
-        <Loading message="Loading" loading={loadingMessages} />
-        <ul className="divide-y divide-gray-200">
-            {(data && data.messages || []).map(message => <li key={message.id} className="py-4">
-                <ChatMessage {...message} />
-            </li>)}
-        </ul>
-        <div className="mt-1">
+    useEffect(() => {
+        console.log(conversationSubscription)
+    }, [isConversationUpdating, conversationSubscription])
+
+
+    return <div className="flex flex-col">
+        <div className="flex-auto">
+            <Error error={error} />
+            <Error error={errorMessages} />
+            <Loading message="Sending" loading={loading} />
+            <Loading message="Loading" loading={loadingMessages} />
+        </div>
+        <div className="max-h-full">
+            <ul className="divide-y divide-gray-200">
+                {(data && data.messages || []).map(message => <li key={message.id} className="py-4">
+                    <ChatMessage {...message} />
+                </li>)}
+            </ul>
+        </div>
+
+        <div className="mt-1 flex-auto">
             <textarea
+                ref={textAreaRef}
                 onChange={event => setContent(event.target.value)}
                 id="content"
                 name="content"

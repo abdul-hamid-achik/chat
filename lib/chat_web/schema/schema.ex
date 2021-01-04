@@ -52,6 +52,7 @@ defmodule ChatWeb.Schema.Schema do
     @desc "Create Message"
     field :create_message, :message do
       arg(:content, non_null(:string))
+      arg(:conversation_id, non_null(:string))
 
       middleware(Middleware.Authenticate)
       resolve(&Resolvers.System.create_message/3)
@@ -63,6 +64,17 @@ defmodule ChatWeb.Schema.Schema do
 
       middleware(Middleware.Authenticate)
       resolve(&Resolvers.System.create_conversation/3)
+    end
+  end
+
+  subscription do
+    @desc "Subscribe to new messages in a conversation"
+    field :conversation_change, :message do
+      arg(:conversation_id, non_null(:id))
+
+      config(fn args, _res ->
+        {:ok, topic: args.conversation_id}
+      end)
     end
   end
 

@@ -248,6 +248,10 @@ defmodule Chat.System do
 
   """
   def create_message(attrs \\ %{}) do
+    with conversation <- get_conversation!(Map.get(attrs, :conversation_id)) do
+      publish_conversation_change(conversation)
+    end
+
     %Message{}
     |> Message.changeset(attrs)
     |> Repo.insert()
@@ -625,5 +629,13 @@ defmodule Chat.System do
 
   def query(queryable, _) do
     queryable
+  end
+
+  defp publish_conversation_change(conversation) do
+    Absinthe.Subscription.publish(
+      ChatWeb.Endpoint,
+      conversation,
+      conversation_change: conversation.id
+    )
   end
 end

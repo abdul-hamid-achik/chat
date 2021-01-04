@@ -4,10 +4,11 @@ import { useDispatch } from 'react-redux'
 interface Layout {
     sidebar: boolean
     user?: User | undefined
-    conversation?: Conversation
+    conversation?: Conversation | undefined
+    conversations: Array<Conversation>
 }
 
-const layoutInitialState: Layout = { sidebar: true }
+const layoutInitialState: Layout = { sidebar: true, conversations: [] }
 
 export const layout = createSlice({
     name: "layout",
@@ -24,6 +25,11 @@ export const layout = createSlice({
         setConversation: (state, action: PayloadAction<Conversation>) => ({
             ...state,
             conversation: action.payload
+        }),
+        setConversations: (state, action: PayloadAction<Array<Conversation>>) => ({
+            ...state,
+            conversations: action.payload,
+            conversation: action.payload[0]
         })
     },
 })
