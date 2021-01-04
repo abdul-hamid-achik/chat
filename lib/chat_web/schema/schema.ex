@@ -104,6 +104,7 @@ defmodule ChatWeb.Schema.Schema do
   object :message do
     field :id, :id
     field :content, non_null(:string)
+    field :conversation, :conversation
     field :user, non_null(:user), resolve: dataloader(Users)
     field :inserted_at, :naive_datetime
   end

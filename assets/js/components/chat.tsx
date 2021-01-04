@@ -3,6 +3,8 @@ import { useQuery, useMutation, useSubscription } from '@apollo/client'
 import ReactTimeAgo from 'react-time-ago'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+import moment from 'moment'
+import 'moment-timezone'
 import Error from '~/components/error'
 import Loading from '~/components/loading'
 import CREATE_MESSAGE_MUTATION from '~/mutations/create_message.gql'
@@ -12,6 +14,8 @@ import GET_MESSAGES from '~/queries/messages.gql'
 interface ChatProps {
     conversation: Conversation
 }
+
+const localizeDate = (date) => moment().tz(moment.tz.guess(true), date)
 
 const ChatMessage: React.FC<Message> = props =>
     <div className="flex space-x-3 px-6">
@@ -23,7 +27,7 @@ const ChatMessage: React.FC<Message> = props =>
                     <h3 className="text-sm font-medium">{props.user_id}</h3>
                 }
                 <p className="text-sm text-gray-500">
-                    <ReactTimeAgo date={new Date(props.insertedAt)} locale="en-US" />
+                    <ReactTimeAgo date={localizeDate(props.insertedAt)} locale="en-US" />
                 </p>
             </div>
             <p className="text-sm text-gray-500">{props.content}</p>
@@ -35,11 +39,21 @@ const Chat: React.FC<ChatProps> = (props) => {
         loading: loadingMessages,
         error: errorMessages,
         data
-    } = useQuery(GET_MESSAGES, { variables: { conversation_id: props.conversation.id, pollInterval: 200 } })
+    } = useQuery(GET_MESSAGES, {
+        variables: {
+            conversation_id: props.conversation.id,
+            pollInterval: 200
+        }
+    })
     const [content, setContent] = useState<string>("")
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [send_message, { error, loading }] = useMutation(CREATE_MESSAGE_MUTATION)
-    const { data: conversationSubscription, loading: isConversationUpdating } = useSubscription(CONVERSATION_SUBSCRIPTION, { variables: { id: props.conversation.id } })
+    const {
+        data: conversationSubscription,
+        loading: isConversationUpdating
+    } = useSubscription(CONVERSATION_SUBSCRIPTION, {
+        variables: { conversationId: props.conversation.id }
+    })
     const handleSend = () => {
         setContent("")
         send_message({ variables: { content, conversation_id: props.conversation.id } })
