@@ -13,8 +13,8 @@ interface Message {
     user_id: string
     conversation_id: string
     content: string
-    inserted_at: Date
-    updated_at: Date
+    insertedAt: Date
+    updatedAt: Date
 }
 
 interface Conversation {
