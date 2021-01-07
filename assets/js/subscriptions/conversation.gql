@@ -1,9 +1,12 @@
 subscription WatchConversation($conversationId: ID!) {
   conversationChange(conversationId: $conversationId) {
-    id
-    insertedAt
-    conversation {
+    messages {
       id
+      content
+      insertedAt
+      user {
+        email
+      }
     }
   }
 }

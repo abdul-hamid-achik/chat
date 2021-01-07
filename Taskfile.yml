@@ -51,6 +51,8 @@ tasks:
   seed:
     - mix run priv/repo/seeds.exs
 
+  react.devtools:
+    - npx --prefix assets react-devtools
   backend.test:
     cmds:
       - mix test
@@ -69,4 +71,4 @@ tasks:
     cmds:
       - elm-test --watch
   help:
-    - echo "Hey"
+    - echo "This is the cli tool for managing the rpoject"

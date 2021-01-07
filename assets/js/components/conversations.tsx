@@ -21,7 +21,7 @@ const Conversations: React.FC<ConversationsProps> = props => {
     const dispatch = useAppDispatch()
     const inputRef = useRef<HTMLInputElement>(null)
     const selectedConversation = useSelector<Conversation>(store => store.layout.conversation)
-    const { loading, error, data } = useQuery<ConversationsQuery>(GET_CONVERSATIONS)
+    const query = useQuery<ConversationsQuery>(GET_CONVERSATIONS)
     const [title, setTitle] = React.useState<string>("")
     const [create, { loading: createLoading, error: createError, data: createData }] = useMutation(CREATE_CONVERSATION)
     const handleCreate = () => {
@@ -39,13 +39,12 @@ const Conversations: React.FC<ConversationsProps> = props => {
     }, [createData])
 
     useEffect(() => {
-        if (data)
-            dispatch(layout.actions.setConversations(data.conversations))
-    }, [data])
+        if (query.data) dispatch(layout.actions.setConversations(query.data.conversations))
+    }, [query.data])
 
     return props.user ? <div style={{ maxHeight: "calc(100vh - 13.75rem)" }}>
-        <Error error={error} />
-        <Loading loading={loading} />
+        <Error error={query.error} />
+        <Loading loading={query.loading} />
         <ul className="divide-y divide-gray-200" style={{ minHeight: "calc(100vh - 13.75rem)" }}>
             <li className="py-4 flex">
                 <div>
@@ -73,7 +72,7 @@ const Conversations: React.FC<ConversationsProps> = props => {
                     </div>
                 </div>
             </li>
-            {data && data.conversations.map(conversation =>
+            {query.data && query.data.conversations.map(conversation =>
                 <li
                     key={conversation.id}
                     onClick={() => handleConversationEnter(conversation)}

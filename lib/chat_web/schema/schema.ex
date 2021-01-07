@@ -69,7 +69,7 @@ defmodule ChatWeb.Schema.Schema do
 
   subscription do
     @desc "Subscribe to new messages in a conversation"
-    field :conversation_change, :message do
+    field :conversation_change, :conversation do
       arg(:conversation_id, non_null(:id))
 
       config(fn args, _res ->
