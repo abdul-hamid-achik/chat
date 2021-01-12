@@ -52,23 +52,27 @@ tasks:
     - mix run priv/repo/seeds.exs
 
   react.devtools:
-    - npx --prefix assets react-devtools
-  backend.test:
+    dir: ./assets
+    cmds:
+      - npx react-devtools
+
+  test.backend:
     cmds:
       - mix test
 
-  backend.test.wip:
+  test.backend.wip:
     cmds:
       - mix test --only wip
 
-  frontend.test:
+  test.frontend:
     dir: ./assets
     cmds:
-      - elm-test
+      - npm run test
 
-  frontend.test.watch:
+  test.frontend.watch:
     dir: ./assets
     cmds:
-      - elm-test --watch
+      - npm run test.watch
+
   help:
-    - echo "This is the cli tool for managing the rpoject"
+    - echo "This is the cli tool for managing the project"

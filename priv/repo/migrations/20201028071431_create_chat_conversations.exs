@@ -7,6 +7,5 @@ defmodule Chat.Repo.Migrations.CreateChatConversations do
 
       timestamps()
     end
-
   end
 end

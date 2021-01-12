@@ -1,5 +1,5 @@
 mutation CreateConversationMutation($title: String!) {
-  create_conversation(title: $title) {
+  createConversation(title: $title) {
     id
     title
   }

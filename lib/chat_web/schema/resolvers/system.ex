@@ -1,4 +1,4 @@
-defmodule ChatWeb.Resolvers.System do
+defmodule ChatWeb.Schema.Resolvers.System do
   alias ChatWeb.Schema.ChangesetErrors
 
   def list_chat_messages(_parent, %{conversation_id: conversation_id}, _resolution) do

@@ -27,6 +27,7 @@ const Conversations: React.FC<ConversationsProps> = props => {
     const handleCreate = () => {
         create({ variables: { title } })
         setTitle("")
+        if (inputRef.current) inputRef.current.value = ""
     }
 
     const handleConversationEnter = (conversation: Conversation) => {

@@ -7,6 +7,5 @@ defmodule Chat.Repo.Migrations.CreateChatEmojis do
       add :unicode, :string, null: false
       timestamps()
     end
-
   end
 end

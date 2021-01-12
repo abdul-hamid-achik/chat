@@ -66,12 +66,11 @@ const Chat: React.FC<ChatProps> = (props) => {
 
 
     useEffect(() => {
-        if (query.data) setMessages(query.data.messages)
+        setMessages(query.data?.messages)
     }, [query.data])
 
     useEffect(() => {
-        if (subscription.data && subscription.data.conversationChange)
-            setMessages(subscription.data.conversationChange.messages)
+        setMessages(subscription.data?.conversationChange?.messages)
     }, [subscription.data])
 
     return <div className="flex flex-col">
@@ -79,11 +78,11 @@ const Chat: React.FC<ChatProps> = (props) => {
             <Error error={query.error} />
             <Error error={subscription.error} />
             <Loading message="Sending" loading={query.loading} />
-            <Loading message="Loading" loading={subscription.loading} />
+            {/* <Loading message="Loading" loading={subscription.loading} /> */}
         </div>
         <div className="flex-auto overflow-y-scroll" style={{ maxHeight: "calc(100vh - 13.75rem)" }}>
             <ul className="divide-y divide-gray-200" style={{ minHeight: "calc(100vh - 13.75rem)" }}>
-                {messages.map((message, index, array) => <li key={message.id} className="py-4">
+                {messages?.map((message, index, array) => <li key={message.id} className="py-4">
                     <ChatMessage message={message} newest={index === array.length - 1} />
                 </li>)}
             </ul>

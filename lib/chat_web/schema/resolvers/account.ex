@@ -1,4 +1,4 @@
-defmodule ChatWeb.Resolvers.Account do
+defmodule ChatWeb.Schema.Resolvers.Account do
   alias Chat.Users, as: Accounts
   alias ChatWeb.Schema.ChangesetErrors
 
@@ -17,7 +17,7 @@ defmodule ChatWeb.Resolvers.Account do
     end
   end
 
-  def signup(_, args, _) do
+  def sign_up(_, args, _) do
     case Accounts.create(args) do
       {:error, changeset} ->
         {

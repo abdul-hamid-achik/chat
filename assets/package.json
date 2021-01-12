@@ -5,7 +5,8 @@
   "scripts": {
     "deploy": "webpack --mode production",
     "watch": "webpack --mode development --watch",
-    "test": "jest"
+    "test": "jest",
+    "test.watch": "jest --watchAll"
   },
   "dependencies": {
     "@absinthe/socket": "^0.2.1",

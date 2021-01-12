@@ -3,7 +3,7 @@ mutation SignUpMutation(
   $password: String!
   $password_confirm: String!
 ) {
-  signup(
+  signUp(
     email: $email
     password: $password
     password_confirm: $password_confirm
