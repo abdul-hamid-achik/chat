@@ -18,4 +18,4 @@ Made with Phoenix, Graphql, Apollo, React, Tailwind, Elixir and Typescript
 
 ## Production Environment
 
-Check development file, i'm using [releases](https://hexdocs.pm/phoenix/releases.html) to generate a binary inside a dockerfile
+Check the dockerfile, i'm using [releases](https://hexdocs.pm/phoenix/releases.html) to generate a binary inside a dockerfile
