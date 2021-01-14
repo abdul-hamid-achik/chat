@@ -1,0 +1,42 @@
+name: Test
+on: push
+jobs:
+  test.frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Taskfile
+        uses: Arduino/actions/setup-taskfile@master
+        with:
+          version: "3.x"
+      - uses: actions/checkout@v2
+      - name: Setup
+        run: task setup.frontend
+      - name: Run tests
+        run: task test.frontend
+  test.backend:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:11
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Install Taskfile
+        uses: Arduino/actions/setup-taskfile@master
+        with:
+          version: "3.x"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1
+        with:
+          otp-version: "23.1"
+          elixir-version: "1.10.4"
+      - name: Setup
+        run: task setup
+      - name: Run tests
+        run: task test.backend

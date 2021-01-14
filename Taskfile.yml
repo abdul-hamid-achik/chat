@@ -37,12 +37,18 @@ tasks:
     deps: [migrate]
     cmds:
       - iex -S mix
+
+  setup.frontend:
+    dir: ./assets
+    cmds:
+      - npm install
+
   setup:
     cmds:
+      - task: setup.frontend
       - mix deps.get
       - mix compile
       - mix ecto.setup
-      - npm install --prefix assets
 
     status:
       - test -d ./assets/node_modules
