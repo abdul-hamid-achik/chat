@@ -7,78 +7,133 @@ tasks:
     - task: help
 
   routes:
-    - mix phx.routes -r Chat.Router
+    desc: Prints backend http routes
+    cmds:
+      - mix phx.routes -r Chat.Router
 
   reset:
+    desc: Restarts development environment
     cmds:
       - task: clean
       - task: setup
 
   clean:
+    desc: Restarts development environment
+    deps: [compose.up]
     cmds:
       - mix clean
       - mix ecto.drop
       - rm -rf ./assets/node_modules
       - rm -rf ./uploads
+      - rm .env
+      - task: compose.down
 
   migrate:
+    desc: Runs database migrations
+    deps: [compose.up]
     cmds:
       - mix ecto.migrate
 
   server:
+    desc: Starts backend for development environment
     deps: [migrate]
     cmds:
       - mix phx.server
+
   iex.server:
+    desc: Starts backend server on interactive mode
     deps: [migrate]
     cmds:
       - iex -S mix phx.server
   iex:
+    desc: Starts interactive elixir session
     deps: [migrate]
     cmds:
       - iex -S mix
 
+  compose.up:
+    desc: Starts docker images
+    cmds:
+      - docker-compose up -d
+      - docker-compose ps
+      - docker-compose logs --tail=5
+
+  compose.down:
+    desc: Stops docker images
+    cmds:
+      - docker-compose down -v
+
   setup.frontend:
+    desc: Installs node_modules
     dir: ./assets
     cmds:
       - npm install
 
   setup:
+    desc: |
+      Setups the project by installing node_modules, elixir deps, running the database and
+      seeding some test data
+    deps: [compose.up]
     cmds:
+      - cp .env.template .env
       - task: setup.frontend
       - mix deps.get
       - mix compile
       - mix ecto.setup
-
     status:
       - test -d ./assets/node_modules
       - test -d ./_build
 
   seed:
-    - mix run priv/repo/seeds.exs
+    desc: Seeds database with testing data
+    cmds:
+      - mix run priv/repo/seeds.exs
 
   react.devtools:
+    desc: Starts native react devtools
     dir: ./assets
     cmds:
       - npx react-devtools
 
   test.backend:
+    desc: Run tests for backend
+    deps: [compose.up]
     cmds:
       - mix test
 
   test.backend.wip:
+    desc: Run work in progress tagged tests for backend
+    deps: [compose.up]
     cmds:
       - mix test --only wip
 
   test.frontend:
+    desc: Runs tests for frontend
     dir: ./assets
     cmds:
       - npm run test
 
   test.frontend.watch:
+    desc: Runs tests in watch mode
     dir: ./assets
     cmds:
       - npm run test.watch
 
   help:
-    - echo "This is the cli tool for managing the project"
+    - cmd: echo "This is the cli tool for managing the project"
+      silent: true
+
+  ci:
+    desc: Runs all github-actions jobs locally
+    cmds:
+      - act
+
+  ci.test.backend:
+    desc: Runs backend github-actions job locally
+    cmds:
+      - act -j backend
+
+  ci.test.frontend:
+    desc: Runs backend github-actions job locally
+    cmds:
+      - act -j frontend
