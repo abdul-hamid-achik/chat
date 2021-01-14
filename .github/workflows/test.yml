@@ -19,7 +19,7 @@ jobs:
           path: |
             deps
             _build
-          key: ${{runner.os}}-elixir-${{hashFiles('**/mix.lock')}}
+          key: ${{runner.os}}-mix-${{hashFiles('**/mix.lock')}}
           restore-keys: ${{runner.os}}-mix-
       - uses: actions/setup-elixir@v1
         with:
@@ -62,8 +62,8 @@ jobs:
           path: |
             deps
             _build
-          key: ${{runner.os}}-elixir-${{hashFiles('**/mix.lock')}}
-          restore-keys: ${{runner.os}}-elixir-
+          key: ${{runner.os}}-mix-${{hashFiles('**/mix.lock')}}
+          restore-keys: ${{runner.os}}-mix-
       - name: Setup
         run: task ci.setup
       - name: Run tests
