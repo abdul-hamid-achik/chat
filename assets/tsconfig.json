@@ -15,5 +15,5 @@
     }
   },
   "exclude": ["/node_modules/**/*"],
-  "include": ["./js/**/*.ts", "./js/**/*.tsx", "./js/**/*.js"]
+  "include": ["./js/**/*.ts", "./js/**/*.tsx", "./js/**/*.js", "setupTests.ts"]
 }

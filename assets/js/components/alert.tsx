@@ -64,4 +64,4 @@ const Alert: React.FC<AlertProps> = ({ type, message }) => {
     </div>
 }
 
-export default Error
+export default Alert

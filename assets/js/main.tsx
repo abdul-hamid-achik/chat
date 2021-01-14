@@ -14,7 +14,7 @@ interface Props {
 
 }
 
-const App: React.FC<Props> = props =>
+const App: React.FC<Props> = () =>
   <Provider store={store}>
     <ApolloProvider // @ts-ignore 
       client={client}>

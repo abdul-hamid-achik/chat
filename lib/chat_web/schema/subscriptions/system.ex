@@ -1,6 +1,5 @@
 defmodule ChatWeb.Schema.Subscriptions.System do
   use Absinthe.Schema.Notation
-  alias ChatWeb.Schema.Resolvers
 
   object :system_subscriptions do
     @desc "Subscribe to new messages in a conversation"
