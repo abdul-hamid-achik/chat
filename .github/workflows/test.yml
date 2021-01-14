@@ -14,8 +14,19 @@ jobs:
           path: ~/.npm
           key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
           restore-keys: ${{runner.os}}-npm-
+      - uses: actions/cache@v2
+        with:
+          path: |
+            deps
+            _build
+          key: ${{runner.os}}-elixir-${{hashFiles('**/mix.lock')}}
+          restore-keys: ${{runner.os}}-mix-
+      - uses: actions/setup-elixir@v1
+        with:
+          otp-version: "23.2"
+          elixir-version: "1.10.4"
       - name: Setup
-        run: task setup.frontend
+        run: task ci.setup
       - name: Run tests
         run: task ci.test.frontend
   backend:
@@ -32,11 +43,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - name: Update Environment Variables
-        shell: bash
-        run: |
-          echo "${{github.workspace}}/main/extern/crashpad/breakpad/win/" >> $GITHUB_PATH
-          echo "ETTERNA_ARCH=${{matrix.cfg.name}}" >> $GITHUB_ENV
       - name: Install Taskfile
         uses: Arduino/actions/setup-taskfile@master
         with:
@@ -48,12 +54,17 @@ jobs:
           elixir-version: "1.10.4"
       - uses: actions/cache@v2
         with:
+          path: ~/.npm
+          key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
+          restore-keys: ${{runner.os}}-npm-
+      - uses: actions/cache@v2
+        with:
           path: |
             deps
             _build
           key: ${{runner.os}}-elixir-${{hashFiles('**/mix.lock')}}
           restore-keys: ${{runner.os}}-elixir-
       - name: Setup
-        run: task setup
+        run: task ci.setup
       - name: Run tests
         run: task ci.test.backend
