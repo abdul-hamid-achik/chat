@@ -111,7 +111,7 @@ tasks:
     desc: Runs tests for frontend
     dir: ./assets
     cmds:
-      - npm run test
+      - npm test
 
   test.frontend.watch:
     desc: Runs tests in watch mode
@@ -123,17 +123,28 @@ tasks:
     - cmd: echo "This is the cli tool for managing the project"
       silent: true
 
-  ci:
+  act:
     desc: Runs all github-actions jobs locally
     cmds:
       - act
 
-  ci.test.backend:
+  act.test.backend:
     desc: Runs backend github-actions job locally
     cmds:
       - act -j backend
 
-  ci.test.frontend:
+  act.test.frontend:
     desc: Runs backend github-actions job locally
     cmds:
       - act -j frontend
+
+  ci.test.backend:
+    desc: Runs backend tests in ci
+    cmds:
+      - mix test
+
+  ci.test.frontend:
+    desc: Runs frontend tests in ci
+    dir: ./assets
+    cmds:
+      - npm test
