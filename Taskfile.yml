@@ -96,10 +96,10 @@ tasks:
       seeding some test data in github-actions
     cmds:
       - cp .env.template .env
-      - task: ci.setup.frontend
       - mix deps.get
       - mix compile
       - mix ecto.setup
+      - task: ci.setup.frontend
     status:
       - test -d ./assets/node_modules
       - test -d ./_build
