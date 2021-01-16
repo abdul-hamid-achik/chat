@@ -120,12 +120,13 @@ defmodule Chat.Users do
   end
 
   def query(User, %{limit: limit}) do
-    Message
+    User
     |> order_by(asc: :inserted_at)
     |> limit(^limit)
   end
 
-  def query(queryable, _) do
+  def query(queryable, elsess) do
+    IO.inspect(queryable, elsess)
     queryable
   end
 end

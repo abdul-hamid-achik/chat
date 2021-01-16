@@ -1,7 +1,5 @@
 defmodule ChatWeb.Schema.User do
   use Absinthe.Schema.Notation
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-  alias Chat.Users
 
   object :user do
     field :id, :id
@@ -10,7 +8,7 @@ defmodule ChatWeb.Schema.User do
   end
 
   object :session do
-    field :user, non_null(:user), resolve: dataloader(Users)
+    field :user, non_null(:user)
     field :token, non_null(:string)
   end
 end
