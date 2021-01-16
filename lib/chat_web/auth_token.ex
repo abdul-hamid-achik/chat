@@ -6,7 +6,7 @@ defmodule ChatWeb.AuthToken do
   clients can use as identification when using the API.
   """
   def sign(user) do
-    Phoenix.Token.sign(ChatWeb.Endpoint, user_salt() |> IO.inspect(), %{id: user.id})
+    Phoenix.Token.sign(ChatWeb.Endpoint, user_salt(), %{id: user.id})
   end
 
   @doc """
