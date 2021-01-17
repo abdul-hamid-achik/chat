@@ -17,16 +17,6 @@ defmodule ChatWeb.Schema.Queries.UserTest do
     [conn: conn]
   end
 
-  # url = ChatWeb.Router.Helpers.api_v1_session_path(conn, :create)
-  # conn = post(conn, url, user: @valid_attributes)
-
-  # assert %{
-  #          "data" => %{
-  #            "access_token" => _access_token,
-  #            "renewal_token" => _renewal_token
-  #          }
-  #        } = json_response(conn, 200)
-
   describe "`me` Query" do
     test "should return data when logged in", %{conn: conn} do
       user =

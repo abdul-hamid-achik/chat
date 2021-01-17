@@ -1,5 +1,6 @@
 defmodule ChatWeb.Schema.Mutations.UserTest do
   use ChatWeb.ConnCase
+  import Chat.Factory
 
   @sign_up_mutation """
   mutation SignUpMutation(
@@ -60,6 +61,38 @@ defmodule ChatWeb.Schema.Mutations.UserTest do
                |> json_response(200)
 
       user = Chat.Users.get!(id)
+
+      assert "#{user.id}" == id
+      assert user.email == email
+      assert ChatWeb.AuthToken.verify(token)
+    end
+  end
+
+  describe "`login` mutation" do
+    test "should return token and user info", %{conn: conn} do
+      user =
+        insert(:user,
+          email: "abdulachik@gmail.com",
+          password_hash: Pow.Ecto.Schema.Password.pbkdf2_hash("password")
+        )
+
+      assert %{
+               "data" => %{
+                 "login" => %{
+                   "token" => token,
+                   "user" => %{"email" => email, "id" => id}
+                 }
+               }
+             } =
+               conn
+               |> post("/api/graphql", %{
+                 "query" => @login_mutation,
+                 "variables" => %{
+                   email: "abdulachik@gmail.com",
+                   password: "password"
+                 }
+               })
+               |> json_response(200)
 
       assert "#{user.id}" == id
       assert user.email == email
