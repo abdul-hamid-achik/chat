@@ -1,4 +1,4 @@
-![Test](https://github.com/sicksid/chat/workflows/Test/badge.svg)
+![Tests](https://github.com/sicksid/chat/workflows/Test/badge.svg)
 
 # Chat
 
