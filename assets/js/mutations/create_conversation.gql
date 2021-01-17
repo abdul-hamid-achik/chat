@@ -2,5 +2,10 @@ mutation CreateConversationMutation($title: String!) {
   createConversation(title: $title) {
     id
     title
+    insertedAt
+    messages {
+      id
+      insertedAt
+    }
   }
 }

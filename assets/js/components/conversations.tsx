@@ -17,13 +17,17 @@ interface ConversationsQuery {
     conversations: Array<Conversation>
 }
 
+interface ConversationMutation {
+    createConversation: Conversation
+}
+
 const Conversations: React.FC<ConversationsProps> = props => {
     const dispatch = useAppDispatch()
     const inputRef = useRef<HTMLInputElement>(null)
     const selectedConversation = useSelector<Conversation>(store => store.layout.conversation)
     const query = useQuery<ConversationsQuery>(GET_CONVERSATIONS)
     const [title, setTitle] = React.useState<string>("")
-    const [create, { loading: createLoading, error: createError, data: createData }] = useMutation(CREATE_CONVERSATION)
+    const [create, mutation] = useMutation<ConversationMutation>(CREATE_CONVERSATION)
     const handleCreate = () => {
         create({ variables: { title } })
         setTitle("")
@@ -35,18 +39,21 @@ const Conversations: React.FC<ConversationsProps> = props => {
         setTitle("")
     }
 
-    useEffect(() => {
-        console.log(createData)
-    }, [createData])
+    // useEffect(() => {
+    //     if (mutation.data && query.data) dispatch(layout.actions.setConversations([
+    //         mutation.data.createConversation,
+    //         ...query.data.conversations
+    //     ])
+    // }, [mutation.data])
 
     useEffect(() => {
         if (query.data) dispatch(layout.actions.setConversations(query.data.conversations))
     }, [query.data])
 
-    return props.user ? <div style={{ maxHeight: "calc(100vh - 13.75rem)" }}>
+    return props.user ? <div className="overflow-y-scroll h-full" style={{ maxHeight: "calc(-4.25rem + 100vh)" }}>
         <Error error={query.error} />
         <Loading loading={query.loading} />
-        <ul className="divide-y divide-gray-200" style={{ minHeight: "calc(100vh - 13.75rem)" }}>
+        <ul className="divide-y divide-gray-200" style={{ minHeight: "calc(-4.25rem + 100vh)" }}>
             <li className="py-4 flex">
                 <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">Search Or Create a Conversation</label>
