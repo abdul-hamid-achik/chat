@@ -125,8 +125,7 @@ defmodule Chat.Users do
     |> limit(^limit)
   end
 
-  def query(queryable, elsess) do
-    IO.inspect(queryable, elsess)
+  def query(queryable, _) do
     queryable
   end
 end

@@ -22,7 +22,7 @@ defmodule Chat.System do
 
   defdelegate list_conversation_messages(conversation_id), to: Messages, as: :list
   defdelegate create_message(attrs), to: Messages, as: :create
-
+  defdelegate get_message!(id), to: Messages, as: :get!
   defdelegate create_conversation_member(attrs), to: Members, as: :create
 
   def datasource() do
