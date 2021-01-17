@@ -89,7 +89,6 @@ tasks:
       - test -d ./assets/node_modules
       - test -d ./_build
 
-
   seed:
     desc: Seeds database with testing data
     cmds:
@@ -164,7 +163,7 @@ tasks:
     desc: Runs Dialyzer for elixir
     cmds:
       - mkdir -p priv/plts
-      - MIX_ENV=test mix dialyzer
+      - mix dialyzer --quiet
 
   ci.setup:
     desc: |
