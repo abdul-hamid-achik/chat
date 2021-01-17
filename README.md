@@ -1,3 +1,5 @@
+![Test](https://github.com/sicksid/chat/workflows/Test/badge.svg)
+
 # Chat
 
 Made with Phoenix, Graphql, Apollo, React, Tailwind, Elixir and Typescript
