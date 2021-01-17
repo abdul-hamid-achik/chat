@@ -89,15 +89,6 @@ tasks:
       - test -d ./assets/node_modules
       - test -d ./_build
 
-  ci.setup:
-    desc: |
-      Setups the project by installing node_modules, elixir deps and
-       running the database some test data in github-actions
-    cmds:
-      - cp .env.template .env
-      - mix deps.get
-      - mix compile
-      - npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
 
   seed:
     desc: Seeds database with testing data
@@ -174,3 +165,13 @@ tasks:
     cmds:
       - mkdir -p priv/plts
       - MIX_ENV=test mix dialyzer
+
+  ci.setup:
+    desc: |
+      Setups the project by installing node_modules, elixir deps and
+       running the database some test data in github-actions
+    cmds:
+      - cp .env.template .env
+      - mix deps.get
+      - mix compile
+      - npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
