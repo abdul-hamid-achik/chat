@@ -14,7 +14,6 @@ defmodule ChatWeb.Schema.Schema do
   import_types(ChatWeb.Schema.Mutations.User)
   import_types(ChatWeb.Schema.Mutations.System)
 
-
   import_types(ChatWeb.Schema.Subscriptions.System)
 
   query do

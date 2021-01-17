@@ -1,6 +1,7 @@
 defmodule ChatWeb.Schema.Queries.System do
   use Absinthe.Schema.Notation
   alias ChatWeb.Schema.Resolvers
+
   object :system_queries do
     @desc "Gets all messages of a conversation"
     field :messages, list_of(:message) do

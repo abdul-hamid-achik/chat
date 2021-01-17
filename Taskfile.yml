@@ -28,6 +28,11 @@ tasks:
       - rm .env
       - task: compose.down
 
+  format:
+    desc: Formats elixir code
+    cmds:
+      - mix format
+
   migrate:
     desc: Runs database migrations
     deps: [compose.up]
