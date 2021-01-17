@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: deps
-          key: ${{ runner.os }}-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}z-${{ hashFiles('**/mix.lock') }}
 
       - uses: actions/setup-elixir@v1
         with:
@@ -77,8 +77,15 @@ jobs:
         with:
           path: priv/plts
           key: ${{ runner.os }}-plt-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-plt=-
+          restore-keys: ${{ runner.os }}-plt-
       - name: Setup
         run: task ci.setup
+
+      - name: Checking Formatting
+        run: task ci.format
+
+      - name: Running Dialyzer
+        run: task ci.dialyzer
+
       - name: Run tests
         run: task ci.test.backend

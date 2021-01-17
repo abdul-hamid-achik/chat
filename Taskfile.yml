@@ -158,3 +158,14 @@ tasks:
     dir: ./assets
     cmds:
       - npm test
+
+  ci.format:
+    desc: Runs formatting checking for elixir
+    cmds:
+      - mix format --check-formatted
+
+  ci.dialyzer:
+    desc: Runs Dialyzer for elixir
+    cmds:
+      - mkdir -p priv/plts
+      - MIX_ENV=test mix dialyzer
