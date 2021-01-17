@@ -14,13 +14,12 @@ jobs:
           path: ~/.npm
           key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
           restore-keys: ${{runner.os}}-npm-
-      - uses: actions/cache@v2
+      - name: Restore deps cache
+        uses: actions/cache@v2
         with:
-          path: |
-            deps
-            _build
-          key: ${{runner.os}}-mix-${{hashFiles('**/mix.lock')}}
-          restore-keys: ${{runner.os}}-mix-
+          path: deps
+          key: ${{ runner.os }}-mix-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+
       - uses: actions/setup-elixir@v1
         with:
           otp-version: "23.2"
@@ -57,13 +56,23 @@ jobs:
           path: ~/.npm
           key: ${{runner.os}}-npm-${{hashFiles('**/package-lock.json')}}
           restore-keys: ${{runner.os}}-npm-
-      - uses: actions/cache@v2
+      - name: Restore deps cache
+        uses: actions/cache@v2
         with:
-          path: |
-            deps
-            _build
-          key: ${{runner.os}}-mix-${{hashFiles('**/mix.lock')}}
-          restore-keys: ${{runner.os}}-mix-
+          path: deps
+          key: ${{ runner.os }}-mix-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+
+      - name: Restore _build cache
+        uses: actions/cache@v2
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+
+      - name: Restore plt cache
+        uses: actions/cache@v2
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-plt-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
       - name: Setup
         run: task ci.setup
       - name: Run tests
