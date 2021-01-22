@@ -3,6 +3,10 @@ defmodule Chat.System.Conversation do
   import Ecto.Changeset
   alias Chat.System.{Message, ConversationMember}
 
+  @type t :: %__MODULE__{
+    title: String.t()
+  }
+
   schema "conversations" do
     field :title, :string
     has_many :members, ConversationMember

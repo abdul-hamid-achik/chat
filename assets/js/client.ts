@@ -6,25 +6,24 @@ import { setContext } from "apollo-link-context"
 import { hasSubscription } from "@jumpn/utils-graphql"
 import * as AbsintheSocket from "@absinthe/socket"
 import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link"
+import { createLink } from "apollo-absinthe-upload-link"
 import { Socket as PhoenixSocket } from "phoenix"
 
 const HTTP_ENDPOINT = "/api/graphql"
-
 const WS_ENDPOINT = "/socket"
 
-// Create an HTTP link to the Phoenix app's HTTP endpoint URL.
 const httpLink = createHttpLink({
   uri: HTTP_ENDPOINT
 })
 
-// Create a WebSocket link to the Phoenix app's socket URL.
+const uploadLink: ApolloLink = createLink({
+  uri: HTTP_ENDPOINT
+})
+
 const socketLink = createAbsintheSocketLink(
   AbsintheSocket.create(new PhoenixSocket(WS_ENDPOINT))
 )
 
-// If an authentication token exists in local storage, put
-// the token in the "Authorization" request header.
-// Returns an object to set the context of the GraphQL request.
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("auth-token")
   return {
@@ -35,16 +34,12 @@ const authLink = setContext((_, { headers }) => {
   }
 })
 
-// Create a link that "splits" requests based on GraphQL operation type.
-// Queries and mutations go through the HTTP link.
-// Subscriptions go through the WebSocket link.
 const link = ApolloLink.split(
   operation => hasSubscription(operation.query),
   socketLink,
-  authLink.concat(httpLink)
+  authLink.concat(uploadLink.concat(httpLink)),
 )
 
-// Create the Apollo Client instance.
 const client = new ApolloClient({
   link: link,
   cache: new InMemoryCache()

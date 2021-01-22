@@ -8,7 +8,19 @@
 use Mix.Config
 
 config :chat,
-  ecto_repos: [Chat.Repo]
+  ecto_repos: [Chat.Repo],
+  bucket_name: System.get_env("AWS_BUCKET_NAME", "uploads")
+
+config :ex_aws,
+  access_key_id: System.get_env("AWS_ACCESS_KEY_ID", "local_access"),
+  secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY", "local_access"),
+  region: System.get_env("AWS_REGION", "local")
+
+config :ex_aws, :s3,
+  host: System.get_env("AWS_HOST", "127.0.0.1"),
+  port: System.get_env("AWS_PORT", "9000"),
+  region: System.get_env("AWS_REGION", "local"),
+  scheme: System.get_env("AWS_SCHEME", "http://")
 
 # Configures the endpoint
 config :chat, ChatWeb.Endpoint,

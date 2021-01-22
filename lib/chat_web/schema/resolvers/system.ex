@@ -10,9 +10,9 @@ defmodule ChatWeb.Schema.Resolvers.System do
   end
 
   def create_message(_, args, %{context: %{current_user: user}}) do
-    attrs = args |> Map.put(:user_id, user.id)
+    params = build_params(args, user)
 
-    case Chat.System.create_message(attrs) do
+    case Chat.System.create_message(params) do
       {:ok, message} ->
         {:ok, message}
 
@@ -23,10 +23,10 @@ defmodule ChatWeb.Schema.Resolvers.System do
   end
 
   def create_conversation(_, args, %{context: %{current_user: user}}) do
-    attrs = args |> Map.put(:user_id, user.id)
+    params = build_params(args, user)
 
     with {:ok, conversation} <-
-           Chat.System.create_conversation(attrs),
+           Chat.System.create_conversation(params),
          {:ok, _member} <-
            Chat.System.create_conversation_member(%{
              user_id: user.id,
@@ -40,5 +40,18 @@ defmodule ChatWeb.Schema.Resolvers.System do
          message: "Could not create Conversation",
          details: ChangesetErrors.error_details(changeset)}
     end
+  end
+
+  def create_attachment(
+        _,
+        args,
+        %{context: %{current_user: user}}
+      ) do
+    params = build_params(args, user)
+    Chat.System.create_attachment(params)
+  end
+
+  defp build_params(args, user) do
+    Map.put(args, :user_id, user.id)
   end
 end

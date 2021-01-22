@@ -61,7 +61,6 @@ defmodule ChatWeb.Schema.Mutations.UserTest do
                |> json_response(200)
 
       user = Chat.Users.get!(id)
-
       assert "#{user.id}" == id
       assert user.email == email
       assert ChatWeb.AuthToken.verify(token)

@@ -7,6 +7,7 @@ defmodule ChatWeb.Schema.Schema do
   import_types(ChatWeb.Schema.Conversation)
   import_types(ChatWeb.Schema.ConversationMember)
   import_types(ChatWeb.Schema.User)
+  import_types(ChatWeb.Schema.Attachment)
 
   import_types(ChatWeb.Schema.Queries.User)
   import_types(ChatWeb.Schema.Queries.System)

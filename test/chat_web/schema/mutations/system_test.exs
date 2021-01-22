@@ -1,6 +1,7 @@
 defmodule ChatWeb.Schema.Mutations.SystemTest do
-  use ChatWeb.ConnCase
   import Chat.Factory
+  use ChatWeb.ConnCase
+  use Mimic
 
   @create_conversation_mutation """
   mutation CreateConversationMutation($title: String!) {
@@ -22,6 +23,24 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
     }
   }
   """
+
+  @create_attachment_mutation """
+  mutation CreateAttachmentMutation($title: String!, $conversation_id: ID!) {
+    createAttachment(title: $title, conversation_id: $conversation_id, attachment: "attachment") {
+      id
+      title
+      url
+      conversation {
+        id
+      }
+      user {
+        email
+      }
+    }
+  }
+  """
+
+  setup :verify_on_exit!
 
   setup do
     user =
@@ -106,6 +125,58 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
       |> Chat.Repo.preload(:messages)
       |> Map.get(:messages)
       |> Enum.each(&assert &1.content == message_content)
+    end
+  end
+
+  describe "`create_attachment` mutation" do
+    test "should upload file and create attachment in conversation", %{
+      auth_conn: conn,
+      conversation: conversation,
+      user: user
+    } do
+      expect(ExAws, :request!, fn _ -> :ok end)
+
+      title = "My new Image"
+
+      upload = %Plug.Upload{
+        content_type: "image/png",
+        filename: "image.png",
+        path: "test/fixtures/image.png"
+      }
+
+      assert %{
+               "data" => %{
+                 "createAttachment" => %{
+                   "id" => attachment_id,
+                   "title" => attachment_title,
+                   "url" => attachment_url,
+                   "user" => %{
+                     "email" => user_email
+                   },
+                   "conversation" => %{
+                     "id" => conversation_id
+                   }
+                 }
+               }
+             } =
+               conn
+               |> put_req_header("content-type", "multipart/form-data")
+               |> post("/api/graphql", %{
+                 "query" => @create_attachment_mutation,
+                 "attachment" => upload,
+                 "variables" => %{
+                   title: title,
+                   conversation_id: conversation.id
+                 }
+               })
+               |> json_response(200)
+
+      assert attachment = Chat.System.Attachments.get!(attachment_id)
+      assert "#{attachment.id}" == attachment_id
+      assert attachment.title == attachment_title
+      assert attachment_url == attachment.url
+      assert user.email == user_email
+      assert "#{conversation.id}" == conversation_id
     end
   end
 end

@@ -7,6 +7,7 @@ defmodule Chat.System do
   alias Chat.Repo
 
   alias Chat.System.{
+    Attachments,
     Conversation,
     Conversations,
     ConversationMember,
@@ -19,11 +20,11 @@ defmodule Chat.System do
   defdelegate list_conversations(), to: Conversations, as: :list
   defdelegate get_conversation!(id), to: Conversations, as: :get!
   defdelegate create_conversation(attrs), to: Conversations, as: :create
-
   defdelegate list_conversation_messages(conversation_id), to: Messages, as: :list
   defdelegate create_message(attrs), to: Messages, as: :create
   defdelegate get_message!(id), to: Messages, as: :get!
   defdelegate create_conversation_member(attrs), to: Members, as: :create
+  defdelegate create_attachment(attrs), to: Attachments, as: :create
 
   def datasource() do
     Dataloader.Ecto.new(Repo, query: &query/2)

@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   db:
+    container_name: chat-db
     image: postgres:latest
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
@@ -13,6 +14,7 @@ services:
     ports:
       - "5432:5432"
   db-admin:
+    container_name: chat-db-admin
     image: dpage/pgadmin4:latest
     depends_on:
       - db
@@ -27,7 +29,34 @@ services:
     links:
       - "db:pgsql-server"
 
+  minio:
+    container_name: chat-minio
+    image: minio/minio
+    volumes:
+      - minio_data:/data
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: ${AWS_ACCESS_KEY_ID:-local_access}
+      MINIO_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY:-local_access}
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-local_access}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-local_access}
+    command: server /data
+
+  mc:
+    image: minio/mc:latest
+    container_name: chat-mc
+    environment:
+      MINIO_ACCESS_KEY: ${AWS_ACCESS_KEY_ID:-local_access}
+      MINIO_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY:-local_access}
+    depends_on:
+      - minio
+    entrypoint: /usr/bin/mc-entrypoint.sh
+    volumes:
+      - ./scripts/mc-entrypoint.sh:/usr/bin/mc-entrypoint.sh
+
 volumes:
+  minio_data:
   database:
     name: chat-database
   db-admin:
