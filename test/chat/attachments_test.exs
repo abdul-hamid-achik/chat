@@ -25,6 +25,8 @@ defmodule Chat.System.AttachmentsTest do
 
   describe "`create/2`" do
     test "should upload attachment to the bucket", %{conversation: conversation, user: user} do
+      expect(ExAws, :request!, fn _ -> :ok end)
+
       title = "My new Image"
 
       params = %{
