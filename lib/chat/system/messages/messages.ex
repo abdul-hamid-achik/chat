@@ -60,7 +60,7 @@ defmodule Chat.System.Messages do
          :ok <- System.publish_conversation_change(conversation) do
       {:ok, message}
     else
-      error -> error |> IO.inspect()
+      error -> error
     end
   end
 

@@ -29,7 +29,7 @@ defmodule Chat.System.Attachment do
     timestamps()
   end
 
-  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  @spec changeset(__MODULE__.t(), map()) :: Ecto.Changeset.t()
   def changeset(attachment, attrs \\ %{}) do
     attachment
     |> cast(attrs, @required)

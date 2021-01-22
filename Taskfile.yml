@@ -124,6 +124,9 @@ tasks:
     cmds:
       - npm run test.watch
 
+  test:
+    desc: Runs all tests both backend and frontend
+
   help:
     - cmd: echo "This is the cli tool for managing the project"
       silent: true

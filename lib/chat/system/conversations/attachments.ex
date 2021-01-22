@@ -1,8 +1,7 @@
 defmodule Chat.System.Attachments do
   import Ecto.Query, warn: false
   alias Chat.Repo
-  alias System, as: SystemAlias
-  alias Chat.{System.Attachment, System}
+  alias Chat.System.Attachment
 
   @doc """
   Returns the list of attachments.
@@ -45,10 +44,10 @@ defmodule Chat.System.Attachments do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create(map() | nil) :: {:ok, Attachment.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs \\ %{}) do
-    with conversation_id <- Map.get(attrs, :conversation_id),
-         {:ok, attachment_url} <- upload_file(attrs),
-         attachment_params <- Map.put(attrs, :url, attachment_url) |> IO.inspect() do
+    with {:ok, attachment_url} <- upload_file(attrs),
+         attachment_params <- Map.put(attrs, :url, attachment_url) do
       %Attachment{}
       |> Attachment.changeset(attachment_params)
       |> Repo.insert()

@@ -13,7 +13,7 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
   """
 
   @create_message_mutation """
-  mutation CreateMessageMutation($content: String!, $conversation_id: String!) {
+  mutation CreateMessageMutation($content: String!, $conversation_id: ID!) {
     createMessage(content: $content, conversation_id: $conversation_id) {
       id
       content
