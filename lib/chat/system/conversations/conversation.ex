@@ -4,8 +4,8 @@ defmodule Chat.System.Conversation do
   alias Chat.System.{Message, ConversationMember}
 
   @type t :: %__MODULE__{
-    title: String.t()
-  }
+          title: String.t()
+        }
 
   schema "conversations" do
     field :title, :string
