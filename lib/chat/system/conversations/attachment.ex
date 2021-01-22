@@ -29,11 +29,12 @@ defmodule Chat.System.Attachment do
     timestamps()
   end
 
-  @spec changeset(__MODULE__.t(), map()) :: Ecto.Changeset.t()
-  def changeset(attachment, attrs \\ %{}) do
+  def changeset(attachment, attrs) do
     attachment
     |> cast(attrs, @required)
     |> validate_required(@required)
+    |> cast_assoc(:user)
+    |> cast_assoc(:conversation)
   end
 
   @spec build_upload_path(map()) :: String.t()

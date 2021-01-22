@@ -44,14 +44,18 @@ defmodule Chat.System.Attachments do
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec create(map() | nil) :: {:ok, Attachment.t()} | {:error, Ecto.Changeset.t()}
-  def create(attrs \\ %{}) do
-    with {:ok, attachment_url} <- upload_file(attrs),
-         attachment_params <- Map.put(attrs, :url, attachment_url) do
-      %Attachment{}
-      |> Attachment.changeset(attachment_params)
-      |> Repo.insert()
-    end
+  @spec create(map()) :: {:ok, Attachment.t()} | {:error, Ecto.Changeset.t()}
+  def create(attrs) do
+    {:ok, attachment_url} = upload_file(attrs)
+
+    attrs =
+      attrs
+      |> Map.delete(:attachment)
+      |> Map.put(:url, attachment_url)
+
+    %Attachment{}
+    |> Attachment.changeset(attrs)
+    |> Repo.insert()
   end
 
   @doc """

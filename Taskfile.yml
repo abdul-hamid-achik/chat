@@ -126,6 +126,9 @@ tasks:
 
   test:
     desc: Runs all tests both backend and frontend
+    cmds:
+      - task: test.backend
+      - task: test.frontend
 
   help:
     - cmd: echo "This is the cli tool for managing the project"
