@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`\`<Form />\` renders correctly and matches snapshot 1`] = `
+<form
+  action="/url"
+  method="get"
+  onSubmit={[MockFunction]}
+/>
+`;
