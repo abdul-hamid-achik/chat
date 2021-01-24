@@ -1,10 +1,10 @@
-import React from "react"
+import React from 'react'
 import {
 	Link
-} from "react-router-dom"
-import { useApolloClient } from "@apollo/client"
+} from 'react-router-dom'
+import { useApolloClient } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
-import { layout, useAppDispatch } from "~/store"
+import { layout, useAppDispatch } from '~/store'
 
 interface NavbarProps {
 	user?: User
@@ -16,9 +16,9 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 	const dispatch = useAppDispatch()
 
 	const handleLogout = () => {
-		localStorage.removeItem("auth-token")
+		localStorage.removeItem('auth-token')
 		client.resetStore()
-		history.push("/")
+		history.push('/')
 		dispatch(layout.actions.setUser())
 	}
 

@@ -1,17 +1,18 @@
-import { ApolloClient } from "apollo-client"
-import { ApolloLink } from "apollo-link"
-import { InMemoryCache } from "apollo-cache-inmemory"
-import { createHttpLink } from "apollo-link-http"
-import { setContext } from "apollo-link-context"
-import { hasSubscription } from "@jumpn/utils-graphql"
-import * as AbsintheSocket from "@absinthe/socket"
-import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link"
-import { createLink } from "apollo-absinthe-upload-link"
-import { Socket as PhoenixSocket } from "phoenix"
+import { ApolloClient } from 'apollo-client'
+import { ApolloLink } from 'apollo-link'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { createHttpLink } from 'apollo-link-http'
+import { setContext } from 'apollo-link-context'
+import { hasSubscription } from '@jumpn/utils-graphql'
+import * as AbsintheSocket from '@absinthe/socket'
+import { createAbsintheSocketLink } from '@absinthe/socket-apollo-link'
+import { createLink } from 'apollo-absinthe-upload-link'
+import { Socket as PhoenixSocket } from 'phoenix'
 
-const HTTP_ENDPOINT = "/api/graphql"
-const WS_ENDPOINT = "/socket"
+const HTTP_ENDPOINT = '/api/graphql'
+const WS_ENDPOINT = '/socket'
 
+// @ts-ignore
 const httpLink = createHttpLink({
   uri: HTTP_ENDPOINT
 })
@@ -25,19 +26,26 @@ const socketLink = createAbsintheSocketLink(
 )
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("auth-token")
+  const token = localStorage.getItem('auth-token')
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : ""
+      authorization: token ? `Bearer ${token}` : ''
     }
   }
 })
 
+// TODO: learn how to join these two if needed
+// const link = 
+//   ApolloLink.from([
+//     socketLink, authLink, uploadLink, httpLink])
+
+//     operation => hasSubscription(operation.query)
+
 const link = ApolloLink.split(
   operation => hasSubscription(operation.query),
   socketLink,
-  authLink.concat(uploadLink.concat(httpLink)),
+  authLink.concat(uploadLink)
 )
 
 const client = new ApolloClient({

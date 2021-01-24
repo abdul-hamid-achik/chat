@@ -1,20 +1,16 @@
-import React from "react";
+import React from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-} from "react-router-dom";
+} from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client'
-import Pages from "~/pages"
-import client from "~/client"
-import store from "~/store"
-import { Provider } from "react-redux"
+import Pages from '~/pages'
+import client from '~/client'
+import store from '~/store'
+import { Provider } from 'react-redux'
 
-interface Props {
-
-}
-
-const App: React.FC<Props> = () =>
+const App: React.FC = () =>
   <Provider store={store}>
     <ApolloProvider // @ts-ignore 
       client={client}>

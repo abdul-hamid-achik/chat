@@ -25,10 +25,9 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
   """
 
   @create_attachment_mutation """
-  mutation CreateAttachmentMutation($title: String!, $conversation_id: ID!) {
-    createAttachment(title: $title, conversation_id: $conversation_id, attachment: "attachment") {
+  mutation CreateAttachmentMutation($conversation_id: ID!) {
+    createAttachment(conversation_id: $conversation_id, attachment: "attachment") {
       id
-      title
       url
       conversation {
         id
@@ -135,9 +134,6 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
       user: user
     } do
       expect(ExAws, :request!, fn _ -> :ok end)
-
-      title = "My new Image"
-
       upload = %Plug.Upload{
         content_type: "image/png",
         filename: "image.png",
@@ -148,7 +144,6 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
                "data" => %{
                  "createAttachment" => %{
                    "id" => attachment_id,
-                   "title" => attachment_title,
                    "url" => attachment_url,
                    "user" => %{
                      "email" => user_email
@@ -165,7 +160,6 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
                  "query" => @create_attachment_mutation,
                  "attachment" => upload,
                  "variables" => %{
-                   title: title,
                    conversation_id: conversation.id
                  }
                })
@@ -173,7 +167,6 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
 
       assert attachment = Chat.System.Attachments.get!(attachment_id)
       assert "#{attachment.id}" == attachment_id
-      assert attachment.title == attachment_title
       assert attachment_url == attachment.url
       assert user.email == user_email
       assert "#{conversation.id}" == conversation_id

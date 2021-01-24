@@ -26,7 +26,6 @@ defmodule ChatWeb.Schema.Mutations.System do
     @desc "Create an attachment by Uploading a File to a conversation"
     field :create_attachment, :attachment do
       arg(:conversation_id, non_null(:id))
-      arg(:title, non_null(:string))
       arg(:attachment, non_null(:upload))
 
       resolve(&Resolvers.System.create_attachment/3)

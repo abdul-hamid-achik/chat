@@ -12,8 +12,16 @@ defmodule Chat.System.Attachments do
       [%Attachment{}, ...]
 
   """
-  def list do
+  def list(nil) do
     Repo.all(Attachment)
+  end
+
+  def list(conversation_id) do
+    query =
+      from m in Attachment,
+        where: m.conversation_id == ^conversation_id
+
+    Repo.all(query)
   end
 
   @doc """

@@ -6,21 +6,18 @@ defmodule Chat.System.Attachment do
   alias Chat.Users.User
 
   @required [
-    :title,
     :url,
     :user_id,
     :conversation_id
   ]
 
   @type t :: %__MODULE__{
-          title: String.t(),
           url: String.t(),
           user: User.t(),
           conversation: Conversation.t()
         }
 
   schema "attachments" do
-    field :title, :string
     field :url, :string
 
     belongs_to :user, User
@@ -35,6 +32,7 @@ defmodule Chat.System.Attachment do
     |> validate_required(@required)
     |> cast_assoc(:user)
     |> cast_assoc(:conversation)
+    |> unique_constraint(:url)
   end
 
   @spec build_upload_path(map()) :: String.t()

@@ -1,14 +1,14 @@
-import React from "react"
-import Layout from "~/shared/layout"
-import Form from "~/components/form"
+import React from 'react'
+import Layout from '~/shared/layout'
+import Form from '~/components/form'
 import {
 	Link
-} from "react-router-dom";
-import SIGN_UP_MUTATION from '~/mutations/sign-up.gql'
+} from 'react-router-dom';
+import SIGN_UP_MUTATION from '~/api/mutations/sign-up.gql'
 import { useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 import Error from '~/components/error'
-import Loading from "~/components/loading";
+import Loading from '~/components/loading'
 
 export default () => {
 	const [sign_up, { error, loading, data }] = useMutation(SIGN_UP_MUTATION)

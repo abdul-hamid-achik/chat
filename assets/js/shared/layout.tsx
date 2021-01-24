@@ -1,12 +1,12 @@
-import React, { useEffect } from "react"
+import React, { useEffect } from 'react'
 import { useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux'
-import { layout, useAppDispatch } from "~/store"
-import GET_ME from '~/queries/me.gql'
-import Navbar from "~/shared/navbar"
-import Conversations from "~/components/conversations"
-import Error from "~/components/error"
-import Loading from "~/components/loading"
+import { layout, useAppDispatch, RootState } from '~/store'
+import GET_ME from '~/api/queries/me.gql'
+import Navbar from '~/shared/navbar'
+import Conversations from '~/components/conversations'
+import Error from '~/components/error'
+import Loading from '~/components/loading'
 
 interface MeQuery {
 	me?: User
@@ -17,7 +17,7 @@ interface Props {
 
 const Layout: React.FC<Props> = props => {
 	const dispatch = useAppDispatch()
-	const user = useSelector<User>(store => store.layout.user)
+	const user = useSelector((store: RootState) => store.layout.user)
 	const { error, loading, data } = useQuery<MeQuery>(GET_ME)
 	useEffect(() => {
 		if (data && data.me)
@@ -28,7 +28,7 @@ const Layout: React.FC<Props> = props => {
 		<div className="fixed top-0 left-0 w-1/2 h-full bg-white" aria-hidden="true"></div>
 		<div className="fixed top-0 right-0 w-1/2 h-full bg-gray-50" aria-hidden="true"></div>
 		<div className="relative min-h-screen flex flex-col overflow-y-hidden">
-			{data && <Navbar user={user} />}
+			{data && user && <Navbar user={user} />}
 			<div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
 				<div className="flex-1 min-w-0 bg-white xl:flex">
 					<div className="hidden border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
@@ -39,7 +39,7 @@ const Layout: React.FC<Props> = props => {
 						</div>
 					</div>
 
-					<div className="bg-white lg:min-w-0 lg:flex-1">
+					<div className="bg-white lg:min-w-0 lg:flex-1 h-full">
 						<div className="h-full">
 							<div className="relative h-full" >
 								<Error error={error} />

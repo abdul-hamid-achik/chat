@@ -25,6 +25,7 @@ defmodule Chat.System do
   defdelegate get_message!(id), to: Messages, as: :get!
   defdelegate create_conversation_member(attrs), to: Members, as: :create
   defdelegate create_attachment(attrs), to: Attachments, as: :create
+  defdelegate list_conversation_attachments(conversation_id), to: Attachments, as: :list
 
   def datasource() do
     Dataloader.Ecto.new(Repo, query: &query/2)

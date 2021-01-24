@@ -1,0 +1,20 @@
+query Messages($conversationId: ID!) {
+  messages(conversationId: $conversationId) {
+    id
+    content
+    insertedAt
+    user {
+      email
+    }
+  }
+
+  attachments(conversationId: $conversationId) {
+    id
+    url
+    insertedAt
+    user {
+      id
+      email
+    }
+  }
+}

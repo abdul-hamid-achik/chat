@@ -17,11 +17,23 @@ interface Message {
     updatedAt: Date
 }
 
+interface Attachment {
+    id: string
+    conversation: Conversation
+    user: User
+    conversation_id?: string
+    user_id?: string
+    url: string
+    insertedAt: Date
+    updatedAt: Date
+}
+
 interface Conversation {
     id: string
     title: string
     members?: User[]
     messages?: Message[]
+    attachments?: Attachment[]
     owner?: User
 }
 

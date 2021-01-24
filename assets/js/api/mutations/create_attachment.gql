@@ -1,0 +1,15 @@
+mutation CreateAttachmentMutation(
+  $conversationId: ID!
+  $attachment: Upload!
+) {
+  createAttachment(conversationId: $conversationId, attachment: $attachment) {
+    id
+    url
+    conversation {
+      id
+    }
+    user {
+      email
+    }
+  }
+}

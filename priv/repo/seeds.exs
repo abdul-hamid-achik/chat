@@ -1,14 +1,3 @@
-# Script for populating the database. You can run it as:
-#
-#     mix run priv/repo/seeds.exs
-#
-# Inside the script, you can read and write to any of your
-# repositories directly:
-#
-#     Chat.Repo.insert!(%Chat.SomeSchema{})
-#
-# We recommend using the bang functions (`insert!`, `update!`
-# and so on) as they will fail if something goes wrong.
 import Chat.Factory
 
 user =
@@ -16,10 +5,10 @@ user =
     email: "abdulachik@gmail.com"
   )
 
-conversations = insert_list(3, :conversation)
+conversations = insert_list(1, :conversation)
 
 Enum.each(conversations, fn conversation ->
-  messages = insert_list(5, :message, conversation: conversation)
+  messages = insert_list(2, :message, conversation: conversation)
 
   insert(:conversation_member, conversation: conversation, user: user, owner: true)
 

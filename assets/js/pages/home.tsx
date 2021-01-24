@@ -1,8 +1,8 @@
-import React from "react"
-import Layout from "~/shared/layout"
+import React from 'react'
+import Layout from '~/shared/layout'
 import Chat from '~/components/chat'
-import { useSelector } from "react-redux"
-import { RootState } from "~/store"
+import { useSelector } from 'react-redux'
+import { RootState } from '~/store'
 
 
 export default () => {

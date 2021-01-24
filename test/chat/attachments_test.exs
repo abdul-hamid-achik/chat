@@ -27,8 +27,6 @@ defmodule Chat.System.AttachmentsTest do
     test "should upload attachment to the bucket", %{conversation: conversation, user: user} do
       expect(ExAws, :request!, fn _ -> :ok end)
 
-      title = "My new Image"
-
       params = %{
         attachment: %Plug.Upload{
           content_type: "image/png",
@@ -36,14 +34,12 @@ defmodule Chat.System.AttachmentsTest do
           path: "test/fixtures/image.png"
         },
         conversation_id: conversation.id,
-        user_id: user.id,
-        title: title
+        user_id: user.id
       }
 
       assert {:ok, attachment} = Attachments.create(params)
       assert attachment.conversation_id == conversation.id
       assert attachment.user_id == user.id
-      assert attachment.title == title
 
       assert attachment.url =~
                "/uploads/#{conversation.id}/#{user.id}/#{params.attachment.filename}"

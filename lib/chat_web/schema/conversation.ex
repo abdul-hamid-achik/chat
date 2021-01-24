@@ -17,5 +17,10 @@ defmodule ChatWeb.Schema.Conversation do
       arg(:limit, type: :integer, default_value: 100)
       resolve(dataloader(System, :messages, []))
     end
+
+    field :attachments, list_of(:attachment) do
+      arg(:limit, type: :integer, default_value: 100)
+      resolve(dataloader(System, :attachments, []))
+    end
   end
 end

@@ -1,3 +1,8 @@
+/*** 
+ * this component should only be used to render errors coming from apollo client
+ * @params error 
+*/
+
 import React from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'

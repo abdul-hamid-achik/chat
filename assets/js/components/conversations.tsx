@@ -1,13 +1,13 @@
-import React, { useEffect, useRef } from "react"
-import { useSelector } from "react-redux"
-import { useQuery, useMutation } from "@apollo/client"
+import React, { useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux'
+import { useQuery, useMutation } from '@apollo/client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComments, faPlus } from '@fortawesome/free-solid-svg-icons'
-import GET_CONVERSATIONS from "~/queries/conversations.gql"
-import CREATE_CONVERSATION from "~/mutations/create_conversation.gql"
-import Error from "~/components/error"
-import Loading from "~/components/loading"
-import { layout, useAppDispatch } from "~/store"
+import GET_CONVERSATIONS from '~/api/queries/conversations.gql'
+import CREATE_CONVERSATION from '~/api/mutations/create_conversation.gql'
+import Error from '~/components/error'
+import Loading from '~/components/loading'
+import { layout, useAppDispatch, RootState } from '~/store'
 
 interface ConversationsProps {
     user?: User
@@ -24,7 +24,7 @@ interface ConversationMutation {
 const Conversations: React.FC<ConversationsProps> = props => {
     const dispatch = useAppDispatch()
     const inputRef = useRef<HTMLInputElement>(null)
-    const selectedConversation = useSelector<Conversation>(store => store.layout.conversation)
+    const selectedConversation = useSelector((store: RootState) => store.layout.conversation)
     const query = useQuery<ConversationsQuery>(GET_CONVERSATIONS)
     const [title, setTitle] = React.useState<string>("")
     const [create, mutation] = useMutation<ConversationMutation>(CREATE_CONVERSATION)

@@ -56,12 +56,16 @@ tasks:
     cmds:
       - iex -S mix
 
+  compose.logs:
+    desc: Shows logs from the containers
+    cmds:
+      - docker-compose logs --tail=5 -f
+
   compose.up:
     desc: Starts docker images
     cmds:
       - docker-compose up -d
       - docker-compose ps
-      - docker-compose logs --tail=5
 
   compose.down:
     desc: Stops docker images

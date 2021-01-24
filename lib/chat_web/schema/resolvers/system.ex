@@ -5,6 +5,10 @@ defmodule ChatWeb.Schema.Resolvers.System do
     {:ok, Chat.System.list_conversation_messages(conversation_id)}
   end
 
+  def list_conversation_attachments(_parent, %{conversation_id: conversation_id}, _resolution) do
+    {:ok, Chat.System.list_conversation_attachments(conversation_id)}
+  end
+
   def list_conversations(_parent, _args, _resolution) do
     {:ok, Chat.System.list_conversations()}
   end
@@ -48,7 +52,15 @@ defmodule ChatWeb.Schema.Resolvers.System do
         %{context: %{current_user: user}}
       ) do
     params = build_params(args, user)
-    Chat.System.create_attachment(params)
+
+    case Chat.System.create_attachment(params) do
+      {:error, changeset} ->
+        {:error,
+         message: "Could not create attachment", details: ChangesetErrors.error_details(changeset)}
+
+      attachment ->
+        attachment
+    end
   end
 
   defp build_params(args, user) do

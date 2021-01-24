@@ -1,6 +1,6 @@
-import Home from "./home"
-import SignUp from "./signup"
-import LogIn from "./login"
+import Home from './home'
+import SignUp from './signup'
+import LogIn from './login'
 
 export default {
   Home,

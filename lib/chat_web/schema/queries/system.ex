@@ -16,5 +16,12 @@ defmodule ChatWeb.Schema.Queries.System do
       middleware(Middleware.Authenticate)
       resolve(&Resolvers.System.list_conversations/3)
     end
+
+    @desc "Gets all attachments of a conversation"
+    field :attachments, list_of(:attachment) do
+      arg(:conversation_id, non_null(:id))
+      middleware(Middleware.Authenticate)
+      resolve(&Resolvers.System.list_conversation_attachments/3)
+    end
   end
 end

@@ -1,9 +1,9 @@
-import React from "react"
+import React from 'react'
 import {
 	Link, useHistory
-} from "react-router-dom"
-import { useApolloClient, useMutation } from "@apollo/client"
-import LOGIN_MUTATION from '~/mutations/login.gql'
+} from 'react-router-dom'
+import { useApolloClient, useMutation } from '@apollo/client'
+import LOGIN_MUTATION from '~/api/mutations/login.gql'
 import Layout from '~/shared/layout'
 import Form from '~/components/form'
 import Error from '~/components/error'

@@ -5,3 +5,7 @@
 iframe[hidden] {
   display: none;
 }
+
+.chat {
+  max-height: calc(100vh - 4rem);
+}

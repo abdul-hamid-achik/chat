@@ -1,10 +1,3 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
-#
-# This configuration file is loaded before any dependency and
-# is restricted to this project.
-
-# General application configuration
 use Mix.Config
 
 config :chat,
@@ -22,10 +15,9 @@ config :ex_aws, :s3,
   region: System.get_env("AWS_REGION", "local"),
   scheme: System.get_env("AWS_SCHEME", "http://")
 
-# Configures the endpoint
 config :chat, ChatWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "my0gddNdC5hUR5Me8N9w8aP1WnRSVxPlawBD5jk05iDFz5mA/MzLSaiLvqNj/roO",
+  secret_key_base: System.get_env("SECRET_KEY_BASE", "secret_key"),
   render_errors: [view: ChatWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Chat.PubSub,
   live_view: [signing_salt: "DeoHNfmY"],

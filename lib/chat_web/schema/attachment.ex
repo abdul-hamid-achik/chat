@@ -7,7 +7,6 @@ defmodule ChatWeb.Schema.Attachment do
 
   object :attachment do
     field :id, :id
-    field :title, :string
     field :url, :string
     field :inserted_at, :naive_datetime
     field :user, non_null(:user), resolve: dataloader(Users)
