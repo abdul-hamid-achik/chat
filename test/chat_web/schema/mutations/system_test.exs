@@ -134,6 +134,7 @@ defmodule ChatWeb.Schema.Mutations.SystemTest do
       user: user
     } do
       expect(ExAws, :request!, fn _ -> :ok end)
+
       upload = %Plug.Upload{
         content_type: "image/png",
         filename: "image.png",
