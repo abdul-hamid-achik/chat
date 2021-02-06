@@ -1,0 +1,10 @@
+{
+  "tasks": [
+    {
+      "command": "task clean",
+      "label": "Clean Development Environment",
+      "type": "shell"
+    }
+  ],
+  "version": "2.0.0"
+}

@@ -1,99 +1,102 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useQuery, useMutation } from '@apollo/client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComments, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { useForm, useField } from 'react-final-form-hooks'
+import { Drawer, Button, Sidenav, Nav, SelectPicker } from 'rsuite'
 import GET_CONVERSATIONS from '~/api/queries/conversations.gql'
 import CREATE_CONVERSATION from '~/api/mutations/create_conversation.gql'
-import Error from '~/components/error'
-import Loading from '~/components/loading'
 import { layout, useAppDispatch, RootState } from '~/store'
 
 interface ConversationsProps {
-    user?: User
+  user?: User
 }
 
 interface ConversationsQuery {
-    conversations: Array<Conversation>
+  conversations: Array<Conversation>
 }
 
 interface ConversationMutation {
-    createConversation: Conversation
+  createConversation: Conversation
+}
+interface ValidationErrors {
+  title?: "Required" | "Please add a more descriptive title"
 }
 
 const Conversations: React.FC<ConversationsProps> = props => {
-    const dispatch = useAppDispatch()
-    const inputRef = useRef<HTMLInputElement>(null)
-    const selectedConversation = useSelector((store: RootState) => store.layout.conversation)
-    const query = useQuery<ConversationsQuery>(GET_CONVERSATIONS)
-    const [title, setTitle] = React.useState<string>("")
-    const [create, mutation] = useMutation<ConversationMutation>(CREATE_CONVERSATION)
-    const handleCreate = () => {
-        create({ variables: { title } })
-        setTitle("")
-        if (inputRef.current) inputRef.current.value = ""
+  const [creating, setCreating] = useState<boolean>(false)
+  const dispatch = useAppDispatch()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const selectedConversation = useSelector((store: RootState) => store.layout.conversation)
+  const query = useQuery<ConversationsQuery>(GET_CONVERSATIONS)
+  const [create] = useMutation<ConversationMutation>(CREATE_CONVERSATION)
+  const onSubmit = ({ title: conversationName }) => {
+    create({ variables: { title: conversationName } })
+    setCreating(false)
+  }
+  const validate = ({ title: conversationName }: Conversation) => {
+    const errors: ValidationErrors = {}
+    if (!conversationName) {
+      errors.title = "Required"
     }
 
-    const handleConversationEnter = (conversation: Conversation) => {
-        dispatch(layout.actions.setConversation(conversation))
-        setTitle("")
+    if (conversationName && conversationName.length < 10) {
+      errors.title = "Please add a more descriptive title"
     }
+    return errors
+  }
+  const { form, handleSubmit } = useForm({
+    onSubmit,
+    validate
+  })
 
-    // useEffect(() => {
-    //     if (mutation.data && query.data) dispatch(layout.actions.setConversations([
-    //         mutation.data.createConversation,
-    //         ...query.data.conversations
-    //     ])
-    // }, [mutation.data])
+  const title = useField('title', form)
 
-    useEffect(() => {
-        if (query.data) dispatch(layout.actions.setConversations(query.data.conversations))
-    }, [query.data])
 
-    return props.user ? <div className="overflow-y-scroll h-full" style={{ maxHeight: "calc(-4.25rem + 100vh)" }}>
-        <Error error={query.error} />
-        <Loading loading={query.loading} />
-        <ul className="divide-y divide-gray-200" style={{ minHeight: "calc(-4.25rem + 100vh)" }}>
-            <li className="py-4 flex">
-                <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Search Or Create a Conversation</label>
-                    <div className="mt-1 flex rounded-md shadow-sm">
-                        <div className="relative flex items-stretch flex-grow focus-within:z-10">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <FontAwesomeIcon icon={faComments} className="h-5 w-5 text-gray-400" />
-                            </div>
-                            <input
-                                type="text"
-                                name="title"
-                                id="title"
-                                ref={inputRef}
-                                onChange={(event: { target: HTMLInputElement }) => setTitle(event.target.value)}
-                                className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md pl-10 sm:text-sm border-gray-300"
-                                placeholder="title of the conversation" />
-                        </div>
-                        <button
-                            onClick={handleCreate}
-                            className="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                            <FontAwesomeIcon icon={faPlus} className="h-5 w-5 text-gray-400" />
-                            <span>Create</span>
-                        </button>
-                    </div>
-                </div>
-            </li>
-            {query.data && query.data.conversations.map(conversation =>
-                <li
-                    key={conversation.id}
-                    onClick={() => handleConversationEnter(conversation)}
-                    className={`py-4 flex hover:text-gray-400 cursor-pointer ${selectedConversation && selectedConversation.id == conversation.id && "bg-indigo-600"}`}>
-                    <FontAwesomeIcon icon={faComments} className="h-10 w-10 rounded-full" />
-                    <div className="ml-3">
-                        <p className={`text-sm font-medium ${(selectedConversation && selectedConversation.id == conversation.id) ? "text-white" : "text-gray-900"}`}>{conversation.title}</p>
-                        {conversation.owner && <p className={`text-sm ${(selectedConversation && selectedConversation.id == conversation.id) ? "text-white" : "text-gray-500"}`}>{conversation.owner.email}</p>}
-                    </div>
-                </li>
-            )}
-        </ul>
-    </div> : <></>
+  useEffect(() => {
+    if (query.data) dispatch(layout.actions.setConversations(query.data.conversations))
+  }, [query.data])
+
+  return props.user ? <div style={{ width: 250 }}>
+    <Drawer show={creating} onHide={() => setCreating(false)}>
+      <Drawer.Body>
+        <form onSubmit={handleSubmit}>
+          <input
+            {...title.input}
+            className="p-2 w-full text-black"
+            placeholder="title" />
+          {title.meta.touched && title.meta.error && <p className="text-red-400 p-2 bg-red-50">{title.meta.error}</p>}
+          <Button
+            type="submit">
+            <FontAwesomeIcon icon={faPlus} />
+                Create
+              </Button>
+        </form>
+      </Drawer.Body>
+    </Drawer>
+    <Sidenav>
+      <Sidenav.Header>
+        <Button onClick={() => setCreating(true)}>
+          <FontAwesomeIcon icon={faComments} /> Create Conversation
+        </Button>
+      </Sidenav.Header>
+      <Sidenav.Body>
+        <Nav>
+          <Nav.Item
+            eventKey="conversations">
+            <SelectPicker
+              placeholder="Select Conversation"
+              onChange={conversation => dispatch(layout.actions.setConversation(conversation))} data={(query.data?.conversations || []).map((conversation) => ({
+                label: conversation.title,
+                value: conversation,
+                role: "conversations"
+              }))} />
+          </Nav.Item>
+        </Nav>
+      </Sidenav.Body>
+    </Sidenav>
+  </div> : <></>
 }
 
 export default Conversations

@@ -1,0 +1,9 @@
+{
+  "editor.tabSize": 2,
+  "editor.tabCompletion": "on",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "cSpell.words": [
+    "Sidenav"
+  ]
+}
