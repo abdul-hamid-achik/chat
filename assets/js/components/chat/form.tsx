@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import { useDropzone } from 'react-dropzone'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -6,22 +6,33 @@ import { faPaperclip } from '@fortawesome/free-solid-svg-icons'
 import { useForm, useField } from 'react-final-form-hooks'
 import Uploads from "./uploads"
 import CREATE_MESSAGE_MUTATION from '~/api/mutations/create_message.gql'
+
 interface Props {
   conversation: Conversation
+}
+
+interface ValidationErrors {
+  content?: "Required"
 }
 
 const Form: React.FC<Props> = (props) => {
   const [files, setFiles] = useState<Array<File>>([])
   const [sendMessage] = useMutation(CREATE_MESSAGE_MUTATION)
   const onSubmit = ({ content }: Message) => {
-    sendMessage({ variables: { content, conversationId: props.conversation.id } })
-    form.reset()
+    sendMessage({ variables: { content, conversationId: props.conversation.id } }).then(() =>
+      form.reset()
+    )
   }
 
   const validate = ({ content }: Message) => {
-    const errors = {}
+    const errors: ValidationErrors = {}
+    if (!content) {
+      errors.content = "Required"
+    }
+
     return errors
   }
+
   const { form, handleSubmit } = useForm({
     onSubmit,
     validate
