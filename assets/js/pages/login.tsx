@@ -72,11 +72,11 @@ export default () => {
     <Error error={error} />
     <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-200">
           Sign in to your account
     			</h2>
-        <p className="mt-2 text-center text-sm text-gray-600 max-w">
-          Or <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+        <p className="mt-2 text-center text-sm text-gray-300 max-w">
+          Or <Link to="/sign-up" className="font-medium text-indigo-600 hover:text-indigo-500">
             create a new one right here
 					</Link>
         </p>
@@ -93,7 +93,7 @@ export default () => {
                 <input
                   {...email.input}
                   type="email"
-                  className={`${email.meta.touched && email.meta.error && "text-red-900 placeholder-red-300"}appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`} />
+                  className={`${email.meta.touched && email.meta.error && "text-red-900 placeholder-red-300"} appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black`} />
                 {email.meta.touched && email.meta.error && <p className="mt-2 text-sm text-red-600">{email.meta.error}</p>}
               </div>
             </div>
@@ -106,7 +106,8 @@ export default () => {
                 <input
                   {...password.input}
                   type="password"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                  className={`${password.meta.touched && password.meta.error && "text-red-900 placeholder-red-300"} appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black`} />
+                {password.meta.touched && password.meta.error && <p className="mt-2 text-sm text-red-600">{password.meta.error}</p>}
               </div>
             </div>
 

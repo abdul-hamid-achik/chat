@@ -22,3 +22,10 @@ const Chat: React.FC<Props> = ({ conversation }) => <Container>
 </Container>
 
 export default Chat
+export {
+  Message,
+  Timeline,
+  Uploads,
+  Attachment,
+  Form
+}

@@ -1,8 +1,7 @@
 import React from "react"
 import { MockedProvider } from '@apollo/client/testing'
-import { mount, ReactWrapper } from "enzyme"
 import CREATE_MESSAGE_MUTATION from "~/api/mutations/create_message.gql"
-import Chat from "~/components/chat"
+import Chat, { Form, Uploads } from "~/components/chat"
 
 jest.useFakeTimers()
 
@@ -29,6 +28,7 @@ beforeEach(() => {
         </MockedProvider>
     )
 })
+
 describe("`<Chat />`", () => {
     it("renders correctly and matches snapshot", () => {
         expect(wrapper).toMatchSnapshot()
@@ -45,5 +45,27 @@ describe("`<Chat />`", () => {
         const submit = wrapper?.find('button[type="submit"]')
         submit?.simulate('click')
         expect(wrapper).toMatchSnapshot()
+    })
+
+    it("shows attachments above form when dropping them", () => {
+        const file = new File([
+            JSON.stringify({ ping: true })
+        ], 'img.png', { type: 'image/png' })
+
+        const mockedData = {
+            dataTransfer: {
+                files: [file],
+                items: [{
+                    kind: 'file',
+                    type: file.type,
+                    getAsFile: () => file
+                }],
+                types: ['Files']
+            }
+        }
+
+        const form = wrapper?.find(Form)
+        form?.simulate('drop', mockedData)
+        expect(wrapper?.find(Uploads)).toBeTruthy()
     })
 })

@@ -54,7 +54,7 @@ const Form: React.FC<Props> = (props) => {
   return <>
     <Uploads files={files} conversation={props.conversation} removeFile={removeFile} />
     <form className="flex-none justify-self-end" onSubmit={handleSubmit}>
-      <div className={`mt-1 flex-auto ${isDragActive && "border-dashed border-4 border-indigo-600"}`} {...getRootProps()}>
+      <div data-testid="dropzone" className={`mt-1 flex-auto ${isDragActive && "border-dashed border-4 border-indigo-600"}`} {...getRootProps()}>
         {isDragActive && <p className="text-blue">Drop your files here</p>}
         <textarea
           {...content.input}
