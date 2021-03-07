@@ -1,28 +1,41 @@
 import React from 'react'
-import Layout from '~/shared/layout'
 import {
-	Link
+	Link as RouterLink
 } from 'react-router-dom'
+
+import {
+	useColorModeValue as mode,
+	FormControl,
+	FormErrorMessage,
+	FormLabel, Stack,
+	Box,
+	Input,
+	Checkbox,
+	Button,
+	Text,
+	Heading,
+	Link
+} from '@chakra-ui/react'
 import { useForm, useField } from 'react-final-form-hooks'
 import SIGN_UP_MUTATION from '~/api/mutations/sign-up.gql'
 import { useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 import Error from '~/components/error'
-import Loading from '~/components/loading'
 
-
-type RequiredField = "Required"
-type InvalidField = "Invalid"
-type PasswordsShouldMatch = "Passwords should match"
+enum FormErrors {
+	FIELD_REQUIRED = "Required",
+	INVALID_EMAIL = "Invalid Email",
+	PASSWORD_SHOULD_MATCH = "Passwords should match"
+}
 
 interface ValidationErrors {
-	email?: RequiredField | InvalidField,
-	password?: RequiredField,
-	passwordConfirmation?: RequiredField | PasswordsShouldMatch
+	email?: FormErrors.FIELD_REQUIRED | FormErrors.INVALID_EMAIL
+	password?: FormErrors.FIELD_REQUIRED
+	passwordConfirmation?: FormErrors.FIELD_REQUIRED | FormErrors.PASSWORD_SHOULD_MATCH
 }
 
 export default () => {
-	const [sign_up, { error, loading, data }] = useMutation(SIGN_UP_MUTATION)
+	const [sign_up, { error, loading: isLoading, data }] = useMutation(SIGN_UP_MUTATION)
 	const history = useHistory()
 	const onSubmit = ({ email, password, passwordConfirmation }) => {
 		sign_up({ variables: { email, password, passwordConfirmation } })
@@ -34,23 +47,23 @@ export default () => {
 		const errors: ValidationErrors = {}
 		const isEmailValid = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g)
 		if (!isEmailValid.test(email)) {
-			errors.email = "Invalid"
+			errors.email = FormErrors.INVALID_EMAIL
 		}
 
 		if (!email) {
-			errors.email = "Required"
+			errors.email = FormErrors.FIELD_REQUIRED
 		}
 
 		if (!password) {
-			errors.password = "Required"
+			errors.password = FormErrors.FIELD_REQUIRED
 		}
 
 		if (!passwordConfirmation) {
-			errors.passwordConfirmation = "Required"
+			errors.passwordConfirmation = FormErrors.FIELD_REQUIRED
 		}
 
 		if (password != passwordConfirmation) {
-			errors.passwordConfirmation = "Passwords should match"
+			errors.passwordConfirmation = FormErrors.PASSWORD_SHOULD_MATCH
 		}
 
 		return errors
@@ -74,79 +87,70 @@ export default () => {
 	}, [data])
 
 
-	return <Layout>
-		<Error error={error} />
-		<div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-			<div className="sm:mx-auto sm:w-full sm:max-w-md">
-				<h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-					Create a new Account
-    			</h2>
-				<p className="mt-2 text-center text-sm text-white max-w">
-					Or <Link to="/login" className="font-medium text-indigo-200 hover:text-indigo-300">
-						sign in to yours
-					</Link>
-				</p>
-			</div>
+	return <Box bg={mode('gray.50', 'inherit')} minH="100vh" py="12" px={{ sm: '6', lg: '8' }}>
+		<Box maxW={{ sm: 'md' }} mx={{ sm: 'auto' }} w={{ sm: 'full' }}>
+			<Heading mt="6" textAlign="center" size="xl" fontWeight="extrabold">
+				Create a new Account
+			</Heading>
+			<Error error={error} />
+			<Text mt="4" align="center" maxW="md" fontWeight="medium">
+				<span>Already have an account?</span>
+				<Box
+					marginStart="1"
+					color={mode('blue.600', 'blue.200')}
+					_hover={{ color: 'blue.600' }}
+					display={{ base: 'block', sm: 'revert' }}
+					to="/login"
+					as={RouterLink}>
+					sign in to yours
+				</Box>
+			</Text>
 
-			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-				<div className="bg-gray-50 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-					<form onSubmit={handleSubmit}>
-						<div>
-							<label htmlFor="email" className="block text-sm font-medium text-gray-700">
-								Email address
-							</label>
-							<div className="mt-1">
-								<input
-									{...email.input}
-									type="email"
-									className={`${email.meta.touched && email.meta.error && "text-red-900 placeholder-red-300"} appearance-none block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`} />
-								{email.meta.touched && email.meta.error && <p className="mt-2 text-sm text-red-600">{email.meta.error}</p>}
-							</div>
-						</div>
+			<Box maxW={{ sm: 'md' }} mx={{ sm: 'auto' }} mt="8" w={{ sm: 'full' }}>
+				<form onSubmit={handleSubmit}>
+					<Stack spacing="6">
+						<FormControl>
+							<FormLabel htmlFor="email">
+								Email Address
+						</FormLabel>
+							<Input {...email.input} />
+							{email.meta.touched && email.meta.error && <FormErrorMessage>{email.meta.error}</FormErrorMessage>}
+						</FormControl>
 
-						<div>
-							<label htmlFor="password" className="block text-sm font-medium text-gray-700">
+						<FormControl>
+							<FormLabel htmlFor="password">
 								Password
-							</label>
-							<div className="mt-1">
-								<input
-									{...password.input}
-									type="password"
-									className={`${password.meta.touched && password.meta.error && "text-red-900 placeholder-red-300"} appearance-none block w-full text-black  px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`} />
-								{password.meta.touched && password.meta.error && <p className="mt-2 text-sm text-red-600">{password.meta.error}</p>}
-							</div>
-						</div>
+						</FormLabel>
+							<Input
+								type="password"
+								{...password.input} />
+							{password.meta.touched && password.meta.error && <FormErrorMessage>{password.meta.error}</FormErrorMessage>}
+						</FormControl>
+						<FormControl>
+							<FormLabel htmlFor="passwordConfirmation">
+								Password Confirmation
+						</FormLabel>
+							<Input
+								type="password"
+								{...passwordConfirmation.input} />
+							{passwordConfirmation.meta.touched && passwordConfirmation.meta.error && <FormErrorMessage>{passwordConfirmation.meta.error}</FormErrorMessage>}
+						</FormControl>
+						<Checkbox {...rememberMe.input}>
+							Remember Me
+					</Checkbox>
 
-						<div>
-							<label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
-								Confirm Password
-							</label>
-							<div className="mt-1">
-								<input
-									{...passwordConfirmation.input}
-									type="password"
-									className={`${passwordConfirmation.meta.touched && passwordConfirmation.meta.error && "text-red-900 placeholder-red-300"} appearance-none text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`} />
-								{passwordConfirmation.meta.touched && passwordConfirmation.meta.error && <p className="mt-2 text-sm text-red-600">{passwordConfirmation.meta.error}</p>}
-							</div>
-						</div>
-
-						<div className="flex items-center justify-between mt-2">
-							<div className="flex items-center">
-								<input {...rememberMe.input} type="checkbox" className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
-								<label htmlFor="remember_me" className="ml-2 block text-sm text-gray-900">
-									Remember me
-								</label>
-							</div>
-						</div>
-
-						<div className="mt-4">
-							<button type="submit" disabled={submitting} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-								Sign Up <Loading loading={submitting} />
-							</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</Layout >
+						<Button
+							type="submit"
+							isLoading={isLoading}
+							colorScheme="blue"
+							size="lg"
+							fontSize="md"
+							disabled={submitting}>
+							Sign in
+					</Button>
+					</Stack>
+				</form>
+			</Box>
+		</Box>
+	</Box >
 }
